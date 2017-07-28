@@ -9,11 +9,15 @@ var authorization = require('express-authorization');
 var path = require('path');
 var https = require('https');
 
+var MongoClient = require('mongodb').MongoClient;
+
 var route = require('./route');
 var config = require('./config');
 
 var PORT = process.env.PORT || config.port;
 var HOST = process.env.HOST || '';
+
+var mongodb = null;
 
 var app = express();
 
@@ -47,8 +51,20 @@ https.createServer(config.ssl_option, app).listen(PORT, HOST, null, function () 
 });
 */
 
+app.use(function(req,res,next) {
+  req.mongodb = mongodb;
+  next();
+});
+
 app.use('/api', route);
 
-app.listen(PORT, function () {
-  console.log('Server listening on port %d', this.address().port);
+
+MongoClient.connect(config.mongodb.url,
+  config.mongodb.options,function(err,db) {
+  if(!err) {
+    mongodb = db; 
+    app.listen(PORT, function () {
+      console.log('Server listening on port %d', this.address().port);
+    });
+  }
 });

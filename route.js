@@ -10,37 +10,24 @@ var db_url = 'mongodb://45.32.109.171:27017/obec';
 router.get('/dbs/:db/:id?', function(req, res) {
   var collection_name = req.params.db;
   var key = req.params.id ? req.params.id : '';
-  MongoClient.connect(db_url, function(err, db) {
-    if (err) {
-      res.json({
-        'ok': false,
-        'message': err
-      });
-    } else {
-      var collection = db.collection(collection_name);
-      var opt = {
-        limit: 10
-      };
-      if (req.query.limit) {
-        var limit = parseInt(req.query.limit);
-        opt['limit'] = limit ? limit : 10;
-      }
-      collection.find(key == '' ? {} : {
-          "_id": key
-        }, opt)
-        .pipe(through2.obj(function(chunk, enc, callback) {
-          callback(null, {
-            'key': chunk._id,
-            'value': chunk
-          });
-        }))
-        .on('end', function() {
-          db.close();
-        })
-        .pipe(JSONStream.stringify())
-        .pipe(res);
-    }
-  });
+  var db = req.mongodb;
+  var collection = db.collection(collection_name);
+  var opt = {limit: 10};
+  if (req.query.limit) {
+    var limit = parseInt(req.query.limit);
+    opt['limit'] = limit ? limit : 10;
+  }
+  collection.find(key == '' ? {} : {
+    "_id": ObjectId(key)
+  }, opt)
+  .pipe(through2.obj(function(chunk, enc, callback) {
+    callback(null, {
+     'key': chunk._id,
+     'value': chunk
+    });
+  }))
+  .pipe(JSONStream.stringify())
+  .pipe(res);
 });
 
 router.post('/dbs/:db/:id?', function(req, res) {
@@ -127,8 +114,8 @@ router.post('/query/:db/:index', function(req, res) {
       }
       console.log(JSON.stringify(query));
       collection.find(query, opt)
-        .pipe(through2.obj(function(chunk, enc, callback) {
-          callback(null, {
+      .pipe(through2.obj(function(chunk, enc, callback) {
+        callback(null, {
             'key': chunk._id,
             'value': chunk
           });

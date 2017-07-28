@@ -5,6 +5,13 @@ var certsPath = path.join(__dirname, 'ssl_certificate', 'server');
 var caCertsPath = path.join(__dirname, 'ssl_certificate', 'ca');
 var certsJWT = path.join(__dirname, 'ssl_certificate', 'jwt');
 
+module.exports.mongodb = {
+  url:"mongodb://45.32.109.171:27017/obec",
+  options:{
+    poolSize:10
+  }
+}
+
 module.exports.ssl_option = {
   /*---ssl certificate---*/
   key: fs.readFileSync(path.join(certsPath, 'server.key')),
