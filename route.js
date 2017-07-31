@@ -72,6 +72,35 @@ router.post('/dbs/:db/:id?', function(req, res) {
   });
 });
 
+router.delete('/dbs/:db/:id?', function(req, res) {
+  var collection_name = req.params.db;
+  var key = req.params.id ? req.params.id : '';
+  MongoClient.connect(db_url, function(err, db) {
+    if (err) {
+      res.json({
+        'ok': false,
+        'message': err
+      });
+    } else {
+      var collection = db.collection(collection_name);
+      collection.deleteOne(key, function(err, resc) {
+        if (err) {
+          res.json({
+            'ok': false,
+            'message': err
+          });
+        } else {
+          var result = resc.result;
+          res.json({
+            'ok': result.ok == 1 ? true : false,
+            'key': key['_id']
+          });
+        }
+      });
+    }
+  });
+});
+
 router.post('/query/:db/:index', function(req, res) {
   var collection_name = req.params.db;
   var index = req.params.index;
