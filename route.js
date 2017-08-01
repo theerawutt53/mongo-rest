@@ -145,7 +145,7 @@ router.post('/query/:index', function(req, res) {
     for (var i = 0; i < req.body.end.length; i++) {
       var tmp = {};
       tmp[array_attrs[i]] = {
-        '$lt': req.body.end[i]
+        '$lte': req.body.end[i]
       };
       tmp_list.push(tmp);
     }
