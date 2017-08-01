@@ -35,7 +35,14 @@ router.get('/data/:id?', function(req, res) {
   } else {
     collection.findOne({"_id":key}, opt,function(err,doc) {
       if(!err) {
-        res.json({'key':doc._id,'value':doc});
+        if(!doc) {
+          res.json({
+            'ok': false,
+            'message': 'Not Found'
+          });
+        } else {          
+          res.json(doc);
+        }
       } else {
         res.json({
           'ok': false,
@@ -94,7 +101,7 @@ router.delete('/data/:id', function(req, res) {
       var result = resc.result;
       res.json({
         'ok': result.ok == 1 ? true : false,
-        'key': key['_id']
+        'key': key
       });
     }
   });
@@ -166,18 +173,9 @@ router.post('/query/:index', function(req, res) {
   }else{
     query["$and"] = [start_query,end_query];
   }
-  
-  console.log(JSON.stringify({$query:query,$orderby:orderby}));
   collection.find(query, opt).sort(orderby)
-  .pipe(through2.obj(function(chunk, enc, callback) {
-    console.log(chunk.cid);
-    callback(null, {
-        'key': chunk._id,
-        'value': chunk
-      });
-    }))
-    .pipe(JSONStream.stringify())
-    .pipe(res);
+  .pipe(JSONStream.stringify())
+  .pipe(res);
 });
 
 router.get('/index', function(req, res){
