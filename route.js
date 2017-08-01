@@ -174,6 +174,24 @@ router.post('/query/:index', function(req, res) {
     query["$and"] = [start_query,end_query];
   }
   collection.find(query, opt).sort(orderby)
+  .pipe(through2.obj(function(chunk,enc,callback) {
+    var obj = {};
+    obj['key'] = [];
+    obj['key'].push(index);
+    array_attrs.forEach(function(attr) {
+      obj['key'].push(chunk[attr]);
+    });
+    obj['key'].push(chunk._id);
+    if(req.body.include_doc) {
+      obj['value'] = {
+        'key':chunk._id,
+        'doc':chunk        
+      };
+    } else {
+      obj['value']=chunk._id;
+    }
+    callback(null,obj);
+  }))
   .pipe(JSONStream.stringify())
   .pipe(res);
 });
