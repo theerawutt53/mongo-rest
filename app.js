@@ -42,13 +42,9 @@ passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, done) {
 }));
 
 /*
-app.use('/api',ensureLogin_jwt, function(req,res){
-  res.send('api');
-});
 
-https.createServer(config.ssl_option, app).listen(PORT, HOST, null, function () {
-  console.log('Server listening on port %d', this.address().port);
-});
+
+
 */
 
 app.use(function(req,res,next) {
@@ -56,8 +52,9 @@ app.use(function(req,res,next) {
   next();
 });
 
-app.use('/api', route);
+app.use('/',ensureLogin_jwt, route);
 
+//app.use('/', route);
 
 MongoClient.connect(config.mongodb.url,
   config.mongodb.options,function(err,db) {
@@ -66,5 +63,8 @@ MongoClient.connect(config.mongodb.url,
     app.listen(PORT, function () {
       console.log('Server listening on port %d', this.address().port);
     });
+    /*https.createServer(config.ssl_option, app).listen(PORT, HOST, null, function () {
+      console.log('Server listening on port %d', this.address().port);
+    });*/
   }
 });
