@@ -83,7 +83,7 @@ router.delete('/dbs/:db/:id?', function(req, res) {
       });
     } else {
       var collection = db.collection(collection_name);
-      collection.deleteOne(key, function(err, resc) {
+      collection.deleteOne({'_id':key}, function(err, resc) {
         if (err) {
           res.json({
             'ok': false,
