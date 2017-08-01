@@ -3,13 +3,12 @@ var through2 = require('through2');
 var JSONStream = require('JSONStream');
 var MongoClient = require('mongodb').MongoClient;
 var ObjectId = require('mongodb').ObjectId;
+var uuid = require('node-uuid');
 var router = express.Router();
 var config = require('./config');
 
 var collection_name = "obec_students";
- 
 router.get('/data/:id?', function(req, res) {
-  
   var key = req.params.id ? req.params.id : '';
   var db = req.mongodb;
   var collection = db.collection(collection_name);
@@ -18,21 +17,36 @@ router.get('/data/:id?', function(req, res) {
     var limit = parseInt(req.query.limit);
     opt['limit'] = limit ? limit : 10;
   }
-  collection.find(key == '' ? {} : {
-    "_id": ObjectId(key)
-  }, opt)
-  .pipe(through2.obj(function(chunk, enc, callback) {
-    callback(null, {
-     'key': chunk._id,
-     'value': chunk
+
+  var fn = function() {
+    return through2.obj(function(chunk, enc, callback) {
+      callback(null, {
+        'key': chunk._id,
+        'value': chunk
+      });
     });
-  }))
-  .pipe(JSONStream.stringify())
-  .pipe(res);
+  };
+
+  if(key == '') {
+    collection.find({}, opt)
+    .pipe(fn())
+    .pipe(JSONStream.stringify())
+    .pipe(res);
+  } else {
+    collection.findOne({"_id":key}, opt,function(err,doc) {
+      if(!err) {
+        res.json({'key':doc._id,'value':doc});
+      } else {
+        res.json({
+          'ok': false,
+          'message': err
+        });
+      }
+    });
+  }
 });
 
 router.post('/data/:id?', function(req, res) {
-  
   var key = req.params.id ? req.params.id : '';
   key = (key == '') ? {} : {
     "_id": key
@@ -44,7 +58,7 @@ router.post('/data/:id?', function(req, res) {
   if (key._id) {
     value['_id'] = key._id;
   } else {
-    key['_id'] = new ObjectId();
+    key['_id'] = uuid.v1().replace(/-/g, '');
     value['_id'] = key['_id'];
   }
   collection.replaceOne(key, value, {
@@ -83,7 +97,7 @@ router.delete('/data/:id', function(req, res) {
         'key': key['_id']
       });
     }
-  }); 
+  });
 });
 
 router.post('/query/:index', function(req, res) {
@@ -96,7 +110,7 @@ router.post('/query/:index', function(req, res) {
       array_attrs = list_index[i][index];
     }
   }
-  
+
   var opt = {};
   if (req.body.limit) {
     var limit = parseInt(req.body.limit);
@@ -131,6 +145,32 @@ router.post('/query/:index', function(req, res) {
     })
     .pipe(JSONStream.stringify())
     .pipe(res);
+});
+
+router.get('/index', function(req, res){
+  var index = {
+  "name":"obec_students",
+  "index": [{
+      'name': 'cid',
+      'map': function(key, value, emit) {
+        if (value) {
+          if(value.cid){
+            emit([value.cid]);
+          }
+        }
+      }
+    }, {
+      "name": "host_class_room",
+      "map": function(key, value, emit) {
+        if (value) {
+          if(value.hostid && value["class"] && value["room"]){
+            emit([value.hostid, value["class"], value["room"]]);
+          }
+        }
+      }
+    }]
+  };
+  res.json(index);
 });
 
 module.exports = router;
