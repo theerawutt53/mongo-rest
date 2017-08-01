@@ -105,9 +105,15 @@ router.post('/query/:index', function(req, res) {
   var map_index = config.map_index;
   var list_index = map_index[collection_name];
   var array_attrs = [];
+  
+  var orderby = {};
+  
   for (var i = 0; i < list_index.length; i++) {
     if (list_index[i][index]) {
       array_attrs = list_index[i][index];
+      array_attrs.forEach(function(arg) {
+        orderby[arg]=1;
+      });
     }
   }
 
@@ -119,8 +125,34 @@ router.post('/query/:index', function(req, res) {
 
   var db = req.mongodb;
   var collection = db.collection(collection_name);
+  
+  var start_query = {};
+  if (req.body.start) {
+    var tmp_list = [];
+    for (var i = 0; i < req.body.start.length; i++) {
+      var tmp = {};
+      tmp[array_attrs[i]] = {
+        '$gte': req.body.start[i]
+      };
+      tmp_list.push(tmp);
+    }
+    start_query["$and"] = tmp_list;
+  }
+  
+  var end_query = {};
+  if (req.body.end) {
+    var tmp_list = [];
+    for (var i = 0; i < req.body.end.length; i++) {
+      var tmp = {};
+      tmp[array_attrs[i]] = {
+        '$lt': req.body.end[i]
+      };
+      tmp_list.push(tmp);
+    }
+    end_query["$and"] = tmp_list;
+  }
+  
   var query = {};
-  console.log(req.body);
   if (req.body.match) {
     var tmp_list = [];
     for (var i = 0; i < req.body.match.length; i++) {
@@ -131,18 +163,19 @@ router.post('/query/:index', function(req, res) {
       tmp_list.push(tmp);
     }
     query["$and"] = tmp_list;
+  }else{
+    query["$and"] = [start_query,end_query];
   }
-  console.log(JSON.stringify(query));
-  collection.find(query, opt)
+  
+  console.log(JSON.stringify({$query:query,$orderby:orderby}));
+  collection.find(query, opt).sort(orderby)
   .pipe(through2.obj(function(chunk, enc, callback) {
+    console.log(chunk.cid);
     callback(null, {
         'key': chunk._id,
         'value': chunk
       });
     }))
-    .on('end', function() {
-      db.close();
-    })
     .pipe(JSONStream.stringify())
     .pipe(res);
 });
