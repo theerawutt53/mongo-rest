@@ -5,16 +5,25 @@ var certsPath = path.join(__dirname, 'ssl_certificate', 'server');
 var caCertsPath = path.join(__dirname, 'ssl_certificate', 'ca');
 var certsJWT = path.join(__dirname, 'ssl_certificate', 'jwt');
 
-module.exports.mongodb = {
-  url:"mongodb://mongodb1.inforvation.systems:27017/obec",
-  options:{
-    poolSize:100,
-    ssl:true,
-    sslKey: fs.readFileSync(path.join(certsPath, 'mongodb-key.pem')),
-    sslCert: fs.readFileSync(path.join(certsPath, 'mongodb-cert.pem')),
-    sslCA: fs.readFileSync(path.join(caCertsPath, 'mongodb-ca-chain.pem'))
+module.exports.mongodb = [
+  {
+    db:'obec',
+    url:"mongodb://mongodb1.inforvation.systems:27017/obec",
+    options:{
+      poolSize:100,
+      ssl:true,
+      sslKey: fs.readFileSync(path.join(certsPath, 'mongodb-key.pem')),
+      sslCert: fs.readFileSync(path.join(certsPath, 'mongodb-cert.pem')),
+      sslCA: fs.readFileSync(path.join(caCertsPath, 'mongodb-ca-chain.pem'))
+    },
+    map_index : {
+      "obec_students": [
+        {"host_class_room": ["hostid","class","room"]},
+        {"cid": ["cid"]}
+      ]
+    }
   }
-}
+]
 
 module.exports.ssl_option = {
   /*---ssl certificate---*/
@@ -37,21 +46,4 @@ module.exports.jwt = {
   cert: fs.readFileSync(path.join(certsJWT, 'jwt_cert.crt'))
 };
 
-module.exports.map_index = {
-  "obec_students": [
-    {
-      "host_class_room": [
-        "hostid",
-        "class",
-        "room"
-      ]
-    },
-    {
-      "cid": [
-        "cid"
-      ]
-    }
-  ]
-};
-
-module.exports.port = "44325";
+module.exports.port = "44355";

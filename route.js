@@ -7,15 +7,15 @@ var uuid = require('node-uuid');
 var router = express.Router();
 var config = require('./config');
 
-var collection_name = "obec_students";
 router.get('/data/:id?', function(req, res) {
   var key = req.params.id ? req.params.id : '';
-  var db = req.mongodb;
-  var collection = db.collection(collection_name);
+  var collection = req.collection;
   var opt = {limit: 10};
   if (req.query.limit) {
     var limit = parseInt(req.query.limit);
-    opt['limit'] = limit ? limit : 10;
+    if(limit != -1) {
+      opt['limit'] = limit ? limit : 10;
+    }
   }
 
   var fn = function() {
@@ -59,8 +59,7 @@ router.post('/data/:id?', function(req, res) {
     "_id": key
   };
   var value = req.body;
-  var db = req.mongodb;
-  var collection = db.collection(collection_name);
+  var collection = req.collection;
 
   if (key._id) {
     value['_id'] = key._id;
@@ -89,8 +88,7 @@ router.post('/data/:id?', function(req, res) {
 
 router.delete('/data/:id', function(req, res) {
   var key = req.params.id;
-  var db = req.mongodb;
-  var collection = db.collection(collection_name);
+  var collection = req.collection;
   collection.deleteOne({'_id':key}, function(err, resc) {
     if (err) {
       res.json({
@@ -109,8 +107,8 @@ router.delete('/data/:id', function(req, res) {
 
 router.post('/query/:index', function(req, res) {
   var index = req.params.index;
-  var map_index = config.map_index;
-  var list_index = map_index[collection_name];
+  var map_index = req.mongodb.config.map_index;
+  var list_index = req.mongodb.config.map_index[req.collection.collectionName];
   var array_attrs = [];
   
   var orderby = {};
@@ -127,11 +125,12 @@ router.post('/query/:index', function(req, res) {
   var opt = {};
   if (req.body.limit) {
     var limit = parseInt(req.body.limit);
-    opt['limit'] = limit;
+    if(limit != -1) {
+      opt['limit'] = limit;
+    }
   }
 
-  var db = req.mongodb;
-  var collection = db.collection(collection_name);
+  var collection = req.collection;
   
   var start_query = {};
   if (req.body.start) {

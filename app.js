@@ -17,7 +17,7 @@ var config = require('./config');
 var PORT = process.env.PORT || config.port;
 var HOST = process.env.HOST || '';
 
-var mongodb = null;
+var mongodb = {};
 
 var app = express();
 
@@ -47,24 +47,36 @@ passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, done) {
 
 */
 
-app.use(function(req,res,next) {
-  req.mongodb = mongodb;
+app.param('db',function(req,res,next,value) {
+  req.mongodb = mongodb[value];
   next();
 });
 
-app.use('/',ensureLogin_jwt, route);
+app.param('collection',function(req,res,next,value) {
+  req.collection = req.mongodb.db.collection(value);
+  next();
+});
+
+app.use('/:db/:collection',ensureLogin_jwt, route);
 
 //app.use('/', route);
 
-MongoClient.connect(config.mongodb.url,
-  config.mongodb.options,function(err,db) {
-  if(!err) {
-    mongodb = db; 
-    app.listen(PORT, function () {
-      console.log('Server listening on port %d', this.address().port);
-    });
-    /*https.createServer(config.ssl_option, app).listen(PORT, HOST, null, function () {
-      console.log('Server listening on port %d', this.address().port);
-    });*/
-  }
+var count = config.mongodb.length;
+
+config.mongodb.forEach(function(db_config) {
+  MongoClient.connect(db_config.url,
+    db_config.options,function(err,db) {
+    if(!err) {
+      count--;
+      mongodb[db_config.db] = {'db':db,'config':db_config}; 
+      if(count==0) {
+        app.listen(PORT, function () {
+          console.log('Server listening on port %d', this.address().port);
+        });
+      }
+      /*https.createServer(config.ssl_option, app).listen(PORT, HOST, null, function () {
+        console.log('Server listening on port %d', this.address().port);
+      });*/
+    }
+  });
 });
