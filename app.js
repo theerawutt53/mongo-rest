@@ -57,7 +57,7 @@ app.param('collection',function(req,res,next,value) {
   next();
 });
 
-app.use('/:db/:collection',ensureLogin_jwt, route);
+app.use('/v1/:db/:collection',ensureLogin_jwt, route);
 
 //app.use('/', route);
 
