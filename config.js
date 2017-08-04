@@ -20,6 +20,28 @@ module.exports.mongodb = [
       "obec_students": [
         {"host_class_room": ["hostid","class","room"]},
         {"cid": ["cid"]}
+      ],
+      "form_record_new":[
+        {"cid": ["cid"]},
+        {"hostid_cid":["hostid","cid"]}
+      ],
+      "form_record_homevisit":[
+        {"hostid_cid":["hostid","cid"]}
+      ]
+    }
+  },{
+    db:'oosc',
+    url:"mongodb://mongodb1.inforvation.systems:27017/oosc",
+    options:{
+      poolSize:100,
+      ssl:true,
+      sslKey: fs.readFileSync(path.join(certsPath, 'mongodb-key.pem')),
+      sslCert: fs.readFileSync(path.join(certsPath, 'mongodb-cert.pem')),
+      sslCA: fs.readFileSync(path.join(caCertsPath, 'mongodb-ca-chain.pem'))
+    },
+    map_index : {
+      "oosc_form":[
+        {"houseid":["houseid"]}
       ]
     }
   }
@@ -46,4 +68,4 @@ module.exports.jwt = {
   cert: fs.readFileSync(path.join(certsJWT, 'jwt_cert.crt'))
 };
 
-module.exports.port = "44355";
+module.exports.port = "44325";

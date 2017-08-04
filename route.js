@@ -40,7 +40,7 @@ router.get('/data/:id?', function(req, res) {
             'ok': false,
             'message': 'Not Found'
           });
-        } else {          
+        } else {
           res.json(doc);
         }
       } else {
@@ -110,9 +110,9 @@ router.post('/query/:index', function(req, res) {
   var map_index = req.mongodb.config.map_index;
   var list_index = req.mongodb.config.map_index[req.collection.collectionName];
   var array_attrs = [];
-  
+
   var orderby = {};
-  
+
   for (var i = 0; i < list_index.length; i++) {
     if (list_index[i][index]) {
       array_attrs = list_index[i][index];
@@ -131,7 +131,7 @@ router.post('/query/:index', function(req, res) {
   }
 
   var collection = req.collection;
-  
+
   var start_query = {};
   if (req.body.start) {
     var tmp_list = [];
@@ -144,7 +144,7 @@ router.post('/query/:index', function(req, res) {
     }
     start_query["$and"] = tmp_list;
   }
-  
+
   var end_query = {};
   if (req.body.end) {
     var tmp_list = [];
@@ -157,7 +157,7 @@ router.post('/query/:index', function(req, res) {
     }
     end_query["$and"] = tmp_list;
   }
-  
+
   var query = {};
   if (req.body.match) {
     var tmp_list = [];
@@ -184,7 +184,7 @@ router.post('/query/:index', function(req, res) {
     if(req.body.include_doc) {
       obj['value'] = {
         'key':chunk._id,
-        'doc':chunk        
+        'doc':chunk
       };
     } else {
       obj['value']=chunk._id;

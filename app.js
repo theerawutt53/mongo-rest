@@ -41,12 +41,6 @@ passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, done) {
   done(null, jwt_payload);
 }));
 
-/*
-
-
-
-*/
-
 app.param('db',function(req,res,next,value) {
   req.mongodb = mongodb[value];
   next();
@@ -59,8 +53,6 @@ app.param('collection',function(req,res,next,value) {
 
 app.use('/v1/:db/:collection',ensureLogin_jwt, route);
 
-//app.use('/', route);
-
 var count = config.mongodb.length;
 
 config.mongodb.forEach(function(db_config) {
@@ -68,7 +60,7 @@ config.mongodb.forEach(function(db_config) {
     db_config.options,function(err,db) {
     if(!err) {
       count--;
-      mongodb[db_config.db] = {'db':db,'config':db_config}; 
+      mongodb[db_config.db] = {'db':db,'config':db_config};
       if(count==0) {
         app.listen(PORT, function () {
           console.log('Server listening on port %d', this.address().port);
