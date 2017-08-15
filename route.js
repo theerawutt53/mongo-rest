@@ -110,6 +110,7 @@ router.post('/query/:index', function(req, res) {
   var map_index = req.mongodb.config.map_index;
   var list_index = req.mongodb.config.map_index[req.collection.collectionName];
   var array_attrs = [];
+  var attr_att = [];
 
   var orderby = {};
 
@@ -117,7 +118,13 @@ router.post('/query/:index', function(req, res) {
     if (list_index[i][index]) {
       array_attrs = list_index[i][index];
       array_attrs.forEach(function(arg) {
-        orderby[arg]=1;
+        if(arg.constructor === Array) {
+          arg.forEach(function(att) {
+            attr_att.push(att);
+          });
+        } else {
+          orderby[arg]=1;
+        }
       });
     }
   }
@@ -178,8 +185,17 @@ router.post('/query/:index', function(req, res) {
     obj['key'] = [];
     obj['key'].push(index);
     array_attrs.forEach(function(attr) {
-      obj['key'].push(chunk[attr]);
+      if(attr.constructor !== Array) {
+        obj['key'].push(chunk[attr]);
+      }
     });
+    var atts = [];
+    attr_att.forEach(function(attr) {
+      atts.push(chunk[attr]);
+    });
+    if(atts.length > 0) {
+      obj['key'].push(atts);
+    }
     obj['key'].push(chunk._id);
     if(req.body.include_doc) {
       obj['value'] = {

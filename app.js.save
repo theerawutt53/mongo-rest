@@ -53,6 +53,8 @@ app.param('collection',function(req,res,next,value) {
 
 app.use('/v1/:db/:collection',ensureLogin_jwt, route);
 
+app.use('/api/dbs/:collection',ensureLogin_jwt, route);
+
 var count = config.mongodb.length;
 
 config.mongodb.forEach(function(db_config) {
