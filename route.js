@@ -186,12 +186,21 @@ router.post('/query/:index', function(req, res) {
     obj['key'].push(index);
     array_attrs.forEach(function(attr) {
       if(attr.constructor !== Array) {
-        obj['key'].push(chunk[attr]);
+        var value = attr.split('.').reduce(function(a, b) {
+	  if(a != null) return a[b];
+          return null;
+        }, chunk);
+       // atts.push(value);
+        obj['key'].push(value);
       }
     });
     var atts = [];
     attr_att.forEach(function(attr) {
-      atts.push(chunk[attr]);
+      var value = attr.split('.').reduce(function(a, b) {
+	if(a != null) return a[b];
+        return null;
+      }, chunk);
+      atts.push(value);
     });
     if(atts.length > 0) {
       obj['key'].push(atts);

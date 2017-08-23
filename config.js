@@ -87,16 +87,40 @@ module.exports.mongodb = [
         {"hostid_timestamp_cid_name":["staff_info.HostID","ts","student_info.cid","student_info.name"]}
       ],
       "students_care":[
-        {"cid_year_type":["student.cid",["status","ts"]]},
+        {"cid_year_type":["doc_type","student.cid","dmc.year","form_type",["status","ts"]]},
         {"assignment":["dmc.host","dmc.level","dmc.room","status","form_type","student.cid","student.name","ts"]},
         {"assignments_by_room":["dmc.host","dmc.level","dmc.room","status","ts",["status","form_type","student.cid","student.name","ts"]]},
         {"class_info":["host","year","level","room"]},
-        {"host_info":["dmc.host"]}
+        {"host_info":["doc_type","dmc.host"]}
+      ],
+      "CCT_CHECKDATA_60_1_RESULT_PER_AREA":[
+        {"areaid":["areaid"]}
+      ],
+      "morning_attendance":[
+        {"host_year_semester_class_room_recdate":["hostid","year","semester","educationclass","room","recdate"]}
+      ],
+      "hostclassroom_data":[
+        {"hostid_class_room":["hostid","class","room"]}
+      ],
+      "student_data":[
+        {"cid":["cid"]}
+      ],
+      "KPI_DATA":[
+        {"hostid":["hostid"]}
+      ],
+      "studenthouse_location":[
+        {"cid":["cid"]}
+      ],
+      "cct_record":[
+        {"cid":["cid"]}
+      ],
+      "homevisit_record":[
+        {"cid":["cid"]}
       ]
     }
   },{
     db:'oosc',
-    url:"mongodb://mongodb1.inforvation.systems:27017/oosc",
+    url:"mongodb://mongodb2.inforvation.systems:27017/oosc",
     options:{
       poolSize:100,
       ssl:true,
@@ -117,7 +141,7 @@ module.exports.mongodb = [
     }
   },{
     db:'qinfo',
-    url:"mongodb://mongodb1.inforvation.systems:27017/qinfo",
+    url:"mongodb://mongodb2.inforvation.systems:27017/qinfo",
     options:{
       poolSize:100,
       ssl:true,
@@ -154,6 +178,32 @@ module.exports.mongodb = [
       ],
       "activity":[
         {"id":["id"]}
+      ],
+      "_attendance_count":[
+        {"id":["_id"]}
+      ],
+      "_attendance_all":[
+        {"id":["_id"]}
+      ]
+    }
+  },{
+    db:'cores',
+    url:"mongodb://mongodb2.inforvation.systems:27017/cores",
+    options:{
+      poolSize:100,
+      ssl:true,
+      sslKey: fs.readFileSync(path.join(certsPath, 'mongodb-key.pem')),
+      sslCert: fs.readFileSync(path.join(certsPath, 'mongodb-cert.pem')),
+      sslCA: fs.readFileSync(path.join(caCertsPath, 'mongodb-ca-chain.pem'))
+    },
+    map_index : {
+      "role_db":[
+        {"app_user":["application","user"]},
+        {"app_role_area_host":["application","roles","profile.areaid","profile.hostid"]},
+        {"app_province_city_tumbon":["application","profile.province","profile.city","profile.tumbon"]}
+      ],
+      "user_db":[
+        {"user":["user"]}
       ]
     }
   }
