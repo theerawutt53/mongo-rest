@@ -186,21 +186,12 @@ router.post('/query/:index', function(req, res) {
     obj['key'].push(index);
     array_attrs.forEach(function(attr) {
       if(attr.constructor !== Array) {
-        var value = attr.split('.').reduce(function(a, b) {
-	  if(a != null) return a[b];
-          return null;
-        }, chunk);
-       // atts.push(value);
-        obj['key'].push(value);
+        obj['key'].push(chunk[attr]);
       }
     });
     var atts = [];
     attr_att.forEach(function(attr) {
-      var value = attr.split('.').reduce(function(a, b) {
-	if(a != null) return a[b];
-        return null;
-      }, chunk);
-      atts.push(value);
+      atts.push(chunk[attr]);
     });
     if(atts.length > 0) {
       obj['key'].push(atts);
@@ -218,32 +209,6 @@ router.post('/query/:index', function(req, res) {
   }))
   .pipe(JSONStream.stringify())
   .pipe(res);
-});
-
-router.get('/index', function(req, res){
-  var index = {
-  "name":"obec_students",
-  "index": [{
-      'name': 'cid',
-      'map': function(key, value, emit) {
-        if (value) {
-          if(value.cid){
-            emit([value.cid]);
-          }
-        }
-      }
-    }, {
-      "name": "host_class_room",
-      "map": function(key, value, emit) {
-        if (value) {
-          if(value.hostid && value["class"] && value["room"]){
-            emit([value.hostid, value["class"], value["room"]]);
-          }
-        }
-      }
-    }]
-  };
-  res.json(index);
 });
 
 module.exports = router;

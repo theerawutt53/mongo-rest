@@ -230,4 +230,4 @@ module.exports.jwt = {
   cert: fs.readFileSync(path.join(certsJWT, 'jwt_cert.crt'))
 };
 
-module.exports.port = "44325";
+module.exports.port = "8000";

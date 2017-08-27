@@ -8,10 +8,11 @@ var session = require('express-session');
 var authorization = require('express-authorization');
 var path = require('path');
 var https = require('https');
-
+var rewrite = require('express-urlrewrite');
 var MongoClient = require('mongodb').MongoClient;
 
-var route = require('./route');
+var route1 = require('./route1');
+var route2 = require('./route2');
 var config = require('./config');
 
 var PORT = process.env.PORT || config.port;
@@ -42,16 +43,28 @@ passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, done) {
 }));
 
 app.param('db',function(req,res,next,value) {
+  console.log('db:',value,req.url);
   req.mongodb = mongodb[value];
   next();
 });
 
 app.param('collection',function(req,res,next,value) {
+  console.log('collection:',value);
   req.collection = req.mongodb.db.collection(value);
   next();
 });
 
-app.use('/v1/:db/:collection',ensureLogin_jwt, route);
+for(var key in config.ldb) {
+  app.all('/api/dbs/'+key+'',
+     rewrite('/v1/'+config.ldb[key]+'/'+key+'/data'));
+  app.all('/api/dbs/'+key+'/:id',
+     rewrite('/v1/'+config.ldb[key]+'/'+key+'/data/:id'));
+  app.post('/api/query/'+key+'/:view',
+     rewrite('/v1/'+config.ldb[key]+'/'+key+'/query/:view'));
+}
+
+app.use('/v1/:db/:collection',ensureLogin_jwt, route1);
+app.use('/v2/:db/:collection', route2);
 
 var count = config.mongodb.length;
 
@@ -65,10 +78,10 @@ config.mongodb.forEach(function(db_config) {
         app.listen(PORT, function () {
           console.log('Server listening on port %d', this.address().port);
         });
-      }
-      /*https.createServer(config.ssl_option, app).listen(PORT, HOST, null, function () {
-        console.log('Server listening on port %d', this.address().port);
-      });*/
+        /*https.createServer(config.ssl_option, app).listen(PORT, HOST, null, function () {
+          console.log('Server listening on port %d', this.address().port);
+        });*/
+      }      
     }
   });
 });
