@@ -5,14 +5,84 @@ var certsPath = path.join(__dirname, 'ssl_certificate', 'server');
 var caCertsPath = path.join(__dirname, 'ssl_certificate', 'ca');
 var certsJWT = path.join(__dirname, 'ssl_certificate', 'jwt');
 
+module.exports.forward = {
+  'studentattend': 'http://localhost:44309',
+  'obec_grade': 'http://localhost:44305',
+  'earlywarning': 'http://localhost:44303',
+  'edu_students': 'http://localhost:44308',
+  'obec_teacher': 'http://localhost:44306',
+
+  'admin_area': 'http://moe02.inforvation.systems:44306',
+  'admin_school': 'http://moe02.inforvation.systems:44307',
+  'announcement': 'http://moe02.inforvation.systems:44308',
+  'school_db': 'http://moe02.inforvation.systems:44309',
+  'KpiData59_1MPerArea': 'http://moe02.inforvation.systems:44310',
+  'KpiData59_1MPerProvince': 'http://moe02.inforvation.systems:44311',
+  'KpiData59_1PPerArea': 'http://moe02.inforvation.systems:44312',
+  'KpiData59_1PPerProvince': 'http://moe02.inforvation.systems:44313',
+  'pp5summarynotification': 'http://moe02.inforvation.systems:44314',
+  'teacher67p': 'http://moe02.inforvation.systems:44319',
+  'user_demo': 'http://moe02.inforvation.systems:44320',
+  'dmc59_1': 'http://moe02.inforvation.systems:44323',
+  'pp5summary': 'http://moe02.inforvation.systems:44324'
+};
+
 module.exports.ldb ={
-  "teacher_db":"obec"
+  "teacher_db":"obec",
+  "hostclassroom":"obec",
+  "weightheight":"obec",
+  "hostattendsummary":"obec",
+  "students_care":"obec",
+  "healthcare":"obec",
+  "classteacher":"obec",
+  "dmc_yakjon601":"obec",
+  "form_template":"obec",
+  "_attendance_count":"obec",
+  "_attendance_all":"obec",
+  "hostsystem":"obec",
+  "school":"obec",
+  "form_record_new":"obec",
+  "morning_attendance":"obec",
+  "hostclassroom_data":"obec",
+  "student_data":"obec",
+  "studenthouse_location":"obec",
+  "homevisit_record":"obec",
+  "form_record_homevisit":"obec",
+  "obec_students":"obec",
+  "hostsummary":"obec",
+  "morning":"obec",
+  "morningdetail":"obec",
+  "KPI_DATA":"obec",
+  "CCT_CHECKDATA_60_1_CONFIRMED":"obec",
+  "CCT_CHECKDATA_60_1_NO_CONFIRMED":"obec",
+  "CCT_CHECKDATA_60_1_NoScreen":"obec",
+  "CCT_CHECKDATA_60_1_RESULT":"obec",
+  "CCT_CHECKDATA_60_1_RESULT_PER_AREA":"obec",
+  "CCT_CHECKDATA_60_1_RESULTP4M3_PER_AREA":"obec",
+
+  "role_db":"cores",
+
+  "attendance":"qinfo",
+  "newindicator":"qinfo",
+  "desirecharacteristicdata":"qinfo",
+  "activity":"qinfo",
+  "knowledgestructure":"qinfo",
+  "readthinkwritedata":"qinfo",
+  "examratio":"qinfo",
+  "hostconfig":"qinfo",
+  "subject_attendance":"qinfo",
+
+  "_oosc_child_group":"oosc",
+  "_oosc_agegender_count":"oosc",
+  "_oosc_child_problem":"oosc",
+  "_oosc_agegender_count":"oosc",
+  "_oosc_report":"oosc"
 };
 
 module.exports.mongodb = [
   {
     db:'obec',
-    url:"mongodb://mongodb1.inforvation.systems:27017/obec",
+    url:"mongodb://mongodb1.inforvation.systems:27017,mongodb2.inforvation.systems:27017/obec",
     options:{
       poolSize:100,
       ssl:true,
@@ -97,7 +167,7 @@ module.exports.mongodb = [
         {"areaid":["areaid"]}
       ],
       "morning_attendance":[
-        {"host_year_semester_class_room_recdate":["hostid","year","semester","educationclass","room","recdate"]}
+        {"host_year_semester_class_room_recdate":["hostid","year","semester","educationclassid","room","recdate"]}
       ],
       "hostclassroom_data":[
         {"hostid_class_room":["hostid","class","room"]}
@@ -120,7 +190,7 @@ module.exports.mongodb = [
     }
   },{
     db:'oosc',
-    url:"mongodb://mongodb2.inforvation.systems:27017/oosc",
+    url:"mongodb://mongodb1.inforvation.systems:27017,mongodb2.inforvation.systems:27017/oosc",
     options:{
       poolSize:100,
       ssl:true,
@@ -141,7 +211,7 @@ module.exports.mongodb = [
     }
   },{
     db:'qinfo',
-    url:"mongodb://mongodb2.inforvation.systems:27017/qinfo",
+    url:"mongodb://mongodb1.inforvation.systems:27017,mongodb2.inforvation.systems:27017/qinfo",
     options:{
       poolSize:100,
       ssl:true,
@@ -184,6 +254,9 @@ module.exports.mongodb = [
       ],
       "_attendance_all":[
         {"id":["_id"]}
+      ],
+      "subject_attendance":[
+        {"host_year_semester_class_room_subject_recdate":['hostid','year','semester','educationclass','room','subject','recdate']}
       ]
     }
   },{
@@ -227,7 +300,8 @@ module.exports.ssl_option = {
 
 module.exports.jwt = {
   key: fs.readFileSync(path.join(certsJWT, 'jwt_key.key')),
-  cert: fs.readFileSync(path.join(certsJWT, 'jwt_cert.crt'))
+  cert: fs.readFileSync(path.join(certsJWT, 'jwt_cert.crt')),
+  eexpiresIn:'1h'
 };
 
 module.exports.port = "8000";

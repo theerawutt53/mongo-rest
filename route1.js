@@ -179,6 +179,7 @@ router.post('/query/:index', function(req, res) {
   }else{
     query["$and"] = [start_query,end_query];
   }
+  console.log(JSON.stringify(query));
   collection.find(query, opt).sort(orderby)
   .pipe(through2.obj(function(chunk,enc,callback) {
     var obj = {};
