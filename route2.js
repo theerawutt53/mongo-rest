@@ -99,10 +99,16 @@ router.post('/query', function(req, res) {
   console.log(body);
   var limit = 0;  
   limit = body.limit?parseInt(body.limit):0;  
-  collection.find(body.query,body.projection)
-  .limit(limit)
-  .pipe(JSONStream.stringify())
-  .pipe(res);
+  if(body.distinct) {
+    collection.distinct(body.distinct,body.query).then(function(docs) {
+      res.json(docs);
+    });
+  } else {
+    collection.find(body.query,body.projection)
+    .limit(limit)
+    .pipe(JSONStream.stringify())
+    .pipe(res);
+  }
 });
 
 module.exports = router;

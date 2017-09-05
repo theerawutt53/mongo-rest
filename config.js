@@ -172,16 +172,16 @@ module.exports.mongodb = [
       "hostclassroom_data":[
         {"hostid_class_room":["hostid","class","room"]}
       ],
-      "student_data":[
+      "student_data_db":[
         {"cid":["cid"]}
       ],
       "KPI_DATA":[
         {"hostid":["hostid"]}
       ],
-      "studenthouse_location":[
+      "studenthouse_location_db":[
         {"cid":["cid"]}
       ],
-      "cct_record":[
+      "cct_record_db":[
         {"cid":["cid"]}
       ],
       "homevisit_record":[
