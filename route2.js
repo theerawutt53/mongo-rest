@@ -51,12 +51,12 @@ router.post('/data/:id?', function(req, res) {
   var collection = req.collection;
 
   if (key._id) {
-    value['_id'] = key._id;
+   // value['_id'] = key._id;
   } else {
     key['_id'] = uuid.v1().replace(/-/g, '');
-    value['_id'] = key['_id'];
+   // value['_id'] = key['_id'];
   }
-  collection.replaceOne(key, value, {
+  collection.updateOne(key, value, {
     'upsert': true
   }, function(err, resc) {
     if (err) {
