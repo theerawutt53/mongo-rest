@@ -61,6 +61,7 @@ module.exports.ldb ={
   "CCT_CHECKDATA_60_1_RESULTP4M3_PER_AREA":"obec",
 
   "role_db":"cores",
+  "gpadata":"qinfo",
 
   "attendance":"qinfo",
   "newindicator":"qinfo",
@@ -257,6 +258,9 @@ module.exports.mongodb = [
       ],
       "subject_attendance":[
         {"host_year_semester_class_room_subject_recdate":['hostid','year','semester','educationclass','room','subject','recdate']}
+      ],
+      "gpadata":[
+        {"hostid_year":['hostid','year']}
       ]
     }
   },{

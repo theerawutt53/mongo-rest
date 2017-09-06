@@ -96,9 +96,8 @@ router.delete('/data/:id', function(req, res) {
 router.post('/query', function(req, res) {
   var collection = req.collection;
   var body = req.body;
-  console.log(body);
-  var limit = 0;  
-  limit = body.limit?parseInt(body.limit):0;  
+  var limit = 0;
+  limit = body.limit?parseInt(body.limit):0;
   if(body.distinct) {
     collection.distinct(body.distinct,body.query).then(function(docs) {
       res.json(docs);
