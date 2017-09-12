@@ -24,10 +24,17 @@ module.exports.forward = {
   'teacher67p': 'http://moe02.inforvation.systems:44319',
   'user_demo': 'http://moe02.inforvation.systems:44320',
   'dmc59_1': 'http://moe02.inforvation.systems:44323',
-  'pp5summary': 'http://moe02.inforvation.systems:44324'
+  'pp5summary': 'http://moe02.inforvation.systems:44324',
+
+  'oosc_assignment':'http://thaioosc.org:44301',
+  'oosc_child':'http://thaioosc.org:44302',
+  'oosc_city':'http://thaioosc.org:44303',
+  'oosc_province':'http://thaioosc.org:44305',
+  'oosc_tumbon':'http://thaioosc.org:44306',
+  'oosc_village':'http://thaioosc.org:44307',
 };
 
-module.exports.ldb ={
+module.exports.ldb = {
   "teacher_db":"obec",
   "hostclassroom":"obec",
   "weightheight":"obec",
@@ -53,6 +60,10 @@ module.exports.ldb ={
   "morning":"obec",
   "morningdetail":"obec",
   "KPI_DATA":"obec",
+  "teacher_db":"obec",
+  "student_data_db":"obec",
+  "studenthouse_location_db":"obec",
+  "cct_record_db":"obec",
   "CCT_CHECKDATA_60_1_CONFIRMED":"obec",
   "CCT_CHECKDATA_60_1_NO_CONFIRMED":"obec",
   "CCT_CHECKDATA_60_1_NoScreen":"obec",
@@ -61,8 +72,10 @@ module.exports.ldb ={
   "CCT_CHECKDATA_60_1_RESULTP4M3_PER_AREA":"obec",
 
   "role_db":"cores",
-  "gpadata":"qinfo",
+  "user_db":"cores",
 
+  "pp5summary":"qinfo",
+  "gpadata":"qinfo",
   "attendance":"qinfo",
   "newindicator":"qinfo",
   "desirecharacteristicdata":"qinfo",
@@ -73,6 +86,9 @@ module.exports.ldb ={
   "hostconfig":"qinfo",
   "subject_attendance":"qinfo",
 
+  "oosc_assignhost":"oosc",
+  "oosc_form":"oosc",
+  "oosc_plan":"oosc",
   "_oosc_child_group":"oosc",
   "_oosc_agegender_count":"oosc",
   "_oosc_child_problem":"oosc",
@@ -309,3 +325,13 @@ module.exports.jwt = {
 };
 
 module.exports.port = "8000";
+module.exports.servertime_port = "8001";
+module.exports.blob_port = "8002";
+module.exports.usermanage_port = "8003";
+
+module.exports.azure_blob_accessKey = "BrHP+BhvmKROuKhM/fjojgn6zggBZrFGEZ3+Ma1MfzFW8wp3FpLVxjXrehQFaZrIAzdGlXZJzyNaXT7aj6FKAQ==";
+module.exports.azure_blob_accountName = "nuqlis";
+module.exports.sendgrid_apikey = "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";
+
+module.exports.webdomain = "http://cct.thaieduforall.org/";
+module.exports.cctscreen = false;
