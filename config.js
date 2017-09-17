@@ -328,6 +328,7 @@ module.exports.port = "8000";
 module.exports.servertime_port = "8001";
 module.exports.blob_port = "8002";
 module.exports.usermanage_port = "8003";
+module.exports.cctservice_port = "8004";
 
 module.exports.azure_blob_accessKey = "BrHP+BhvmKROuKhM/fjojgn6zggBZrFGEZ3+Ma1MfzFW8wp3FpLVxjXrehQFaZrIAzdGlXZJzyNaXT7aj6FKAQ==";
 module.exports.azure_blob_accountName = "nuqlis";
