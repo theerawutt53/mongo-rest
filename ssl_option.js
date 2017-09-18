@@ -11,11 +11,11 @@ module.exports.options = {
   key: fs.readFileSync(path.join(certsPath, 'server.key')),
   cert: [
     //fs.readFileSync(path.join(certsPath, 'server-thaiedu.crt')),
-    fs.readFileSync(path.join(certsPath, 'server-'+config.servive_name.crt'))
+    fs.readFileSync(path.join(certsPath, 'server-'+config.servive_name+'.crt'))
   ],
   ca: [
     //fs.readFileSync(path.join(caCertsPath, 'ca-thaiedu.crt')),
-    fs.readFileSync(path.join(caCertsPath, 'ca-'+config.servive_name.crt'))
+    fs.readFileSync(path.join(caCertsPath, 'ca-'+config.servive_name+'.crt'))
   ],
   requestCert: false,
   rejectUnauthorized: true
