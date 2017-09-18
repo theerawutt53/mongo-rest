@@ -25,13 +25,6 @@ module.exports.forward = {
   'user_demo': 'http://moe02.inforvation.systems:44320',
   'dmc59_1': 'http://moe02.inforvation.systems:44323',
   'pp5summary': 'http://moe02.inforvation.systems:44324'
-
-  /*'oosc_assignment':'http://thaioosc.org:44301',
-  'oosc_child':'http://thaioosc.org:44302',
-  'oosc_city':'http://thaioosc.org:44303',
-  'oosc_province':'http://thaioosc.org:44305',
-  'oosc_tumbon':'http://thaioosc.org:44306',
-  'oosc_village':'http://thaioosc.org:44307'*/
 };
 
 module.exports.ldb = {
