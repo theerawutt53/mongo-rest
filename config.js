@@ -24,14 +24,14 @@ module.exports.forward = {
   'teacher67p': 'http://moe02.inforvation.systems:44319',
   'user_demo': 'http://moe02.inforvation.systems:44320',
   'dmc59_1': 'http://moe02.inforvation.systems:44323',
-  'pp5summary': 'http://moe02.inforvation.systems:44324',
+  'pp5summary': 'http://moe02.inforvation.systems:44324'
 
-  'oosc_assignment':'http://thaioosc.org:44301',
+  /*'oosc_assignment':'http://thaioosc.org:44301',
   'oosc_child':'http://thaioosc.org:44302',
   'oosc_city':'http://thaioosc.org:44303',
   'oosc_province':'http://thaioosc.org:44305',
   'oosc_tumbon':'http://thaioosc.org:44306',
-  'oosc_village':'http://thaioosc.org:44307',
+  'oosc_village':'http://thaioosc.org:44307'*/
 };
 
 module.exports.ldb = {
@@ -89,10 +89,12 @@ module.exports.ldb = {
   "oosc_assignhost":"oosc",
   "oosc_form":"oosc",
   "oosc_plan":"oosc",
-  "_oosc_child_group":"oosc",
-  "_oosc_agegender_count":"oosc",
-  "_oosc_child_problem":"oosc",
-  "_oosc_agegender_count":"oosc",
+  "oosc_child":"oosc",
+  "oosc_assignment":"oosc",
+  "oosc_province":"oosc",
+  "oosc_city":"oosc",
+  "oosc_tumbon":"oosc",
+  "oosc_village":"oosc",
   "_oosc_report":"oosc"
 };
 
@@ -224,6 +226,32 @@ module.exports.mongodb = [
       ],
       "oosc_assignhost":[
         {"hostid":["hostid"]}
+      ],
+      "oosc_assignment":[
+        {"assignfor":["assignfor"]},
+        {"village":["village"]}
+      ],
+      "oosc_child":[
+        {"cid":["cid"]},
+        {"villagecode":["villagecode"]},
+        {"houseid":["houseid"]},
+        {"firstname":["firstname"]}
+      ],
+      "oosc_province":[
+        {"id":["id"]},
+        {"name":["name"]}
+      ],
+      "oosc_city":[
+        {"id":["id"]},
+        {"name":["name"]}
+      ],
+      "oosc_tumbon":[
+        {"id":["id"]},
+        {"name":["name"]}
+      ],
+      "oosc_village":[
+        {"id":["id"]},
+        {"name":["name"]}
       ]
     }
   },{
