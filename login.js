@@ -5,7 +5,7 @@ var config = require('./config');
 
 var url = config.mongodb[0]['url'];
 var options = config.mongodb[0]['options'];
-  
+
 var findByUsername = function (username,req, cb) {
   req.collection.find({'User':username})
   .toArray(function(err,docs) {
@@ -28,7 +28,7 @@ var findByID = function (id, done) {
         done(null, false);
       }
     });
-  });  
+  });
 };
 
 var jwtToken = function(UserID) {// sign with RSA SHA256
