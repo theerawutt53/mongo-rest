@@ -24,5 +24,6 @@ module.exports.options = {
 
 module.exports.jwt = {
   key: fs.readFileSync(path.join(certsJWT, 'jwt_key.key')),
-  cert: fs.readFileSync(path.join(certsJWT, 'jwt_cert.crt'))
+  cert: fs.readFileSync(path.join(certsJWT, 'jwt_cert.crt')),
+  eexpiresIn:'1h'
 };
