@@ -38,7 +38,7 @@ var ensureLogin_jwt = function (req, res, next) {
 
 var jwtOptions = {}
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeader();
-jwtOptions.secretOrKey = config.jwt.cert;
+jwtOptions.secretOrKey = ssl.jwt.cert;
 
 var pipe_request = function(method, url, req, res) {
   var jwt = req.headers.authorization?req.headers.authorization:'';
@@ -141,7 +141,7 @@ config.mongodb.forEach(function(db_config) {
       count--;
       mongodb[db_config.db] = {'db':db,'config':db_config};
       if(count==0) {
-        https.createServer(config.ssl_option, app).listen(PORT, HOST, null, function () {
+        https.createServer(ssl.options, app).listen(PORT, HOST, null, function () {
           console.log('Server listening on port %d', this.address().port);
         });
       }
