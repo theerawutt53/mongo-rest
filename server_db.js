@@ -15,8 +15,8 @@ var MongoClient = require('mongodb').MongoClient;
 var route1 = require('./route1');
 var route2 = require('./route2');
 var login_route = require('./login');
-var config = require('./config');
 var ssl = require('./ssl_option');
+var config = require('./config');
 
 var PORT = process.env.PORT || config.port;
 var HOST = process.env.HOST || '';
