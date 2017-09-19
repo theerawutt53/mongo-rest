@@ -2,6 +2,8 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');
 var passport = require('passport');
+var LocalStrategy = require('passport-localapikey').Strategy;
+var BearerStrategy = require('passport-http-bearer').Strategy;
 var JwtStrategy = require('passport-jwt').Strategy;
 var ExtractJwt = require('passport-jwt').ExtractJwt;
 var session = require('express-session');
@@ -22,27 +24,81 @@ var PORT = process.env.PORT || config.port;
 var HOST = process.env.HOST || '';
 
 var mongodb = {};
-
 var app = express();
 
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors());
-app.use(bodyParser.json({limit:'50mb'}));
+app.use(bodyParser.json({
+  limit: '50mb'
+}));
 app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-var ensureLogin_jwt = function (req, res, next) {
-  passport.authenticate('jwt', { session: false })(req,res,next);
-};
+passport.use(new LocalStrategy(function(apikey, done) {
+  login_route._isAuthen(apikey, done)
+}));
+
+passport.use(new BearerStrategy(
+  function(token, done) {
+    var pConf = {
+      protocol: "https",
+      host: "maas.nuqlis.com:9002",
+    };
+    var request = require('request'),
+      options = {
+        url: pConf.protocol + '://' + pConf.host + '/api/userinfo',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      };
+
+    function callback(error, response, body) {
+      if (!error && response.statusCode === 200) {
+        return done(null, body, {
+          scope: 'all'
+        });
+      } else {
+        return done(null, false);
+      }
+    }
+    request(options, callback);
+  }
+));
 
 var jwtOptions = {}
 jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeader();
 jwtOptions.secretOrKey = ssl.jwt.cert;
 
+passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, done) {
+  done(null, jwt_payload);
+}));
+
+var ensureLogin = function(req, res, next) {
+  passport.authenticate(['localapikey', 'bearer', 'jwt'], function(err, user, info) {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      return res.json({
+        'ok': false,
+        'message': 'Authentication Required'
+      });
+    } else {
+      return next();
+    }
+  })(req, res, next);
+};
+
+/*
+var ensureLogin_jwt = function (req, res, next) {
+  passport.authenticate('jwt', { session: false })(req,res,next);
+};
+*/
+
 var pipe_request = function(method, url, req, res) {
-  var jwt = req.headers.authorization?req.headers.authorization:'';
+  var jwt = req.headers.authorization ? req.headers.authorization : '';
   if (req.body) {
     request({
         method: method,
@@ -69,83 +125,77 @@ var pipe_request = function(method, url, req, res) {
   }
 }
 
-passport.use(new JwtStrategy(jwtOptions, function(jwt_payload, done) {
-  done(null, jwt_payload);
-}));
-
-/*
-app.get('/',function(req,res){
-  res.send('test');
-});
-*/
-
 require('express-readme')(app, {
   filename: 'README.md',
   routes: ['/', '/readme']
 });
 
-app.param('db',function(req,res,next,value) {
+app.param('db', function(req, res, next, value) {
   req.mongodb = mongodb[value];
   next();
 });
 
-app.param('collection',function(req,res,next,value) {
+app.param('collection', function(req, res, next, value) {
   req.collection = req.mongodb.db.collection(value);
   next();
 });
 
-app.use('/api/dbs/:db/:id?',function(req,res,next) {
-  if(config.forward[req.params.db]) {
+app.use('/api/dbs/:db/:id?', function(req, res, next) {
+  if (config.forward[req.params.db]) {
     var url = config.forward[req.params.db];
-    var db_url = url+'/data';
-    if(req.params.id) {
-      db_url += '/'+req.params.id;
+    var db_url = url + '/data';
+    if (req.params.id) {
+      db_url += '/' + req.params.id;
     }
-    pipe_request(req.method,db_url,req,res);
+    pipe_request(req.method, db_url, req, res);
   } else {
     next();
   }
 });
 
-app.use('/api/query/:db/:index',function(req,res,next) {
-  if(config.forward[req.params.db]) {
+app.use('/api/query/:db/:index', function(req, res, next) {
+  if (config.forward[req.params.db]) {
     var url = config.forward[req.params.db];
-    var db_url = url+'/query/'+req.params.index;
-    pipe_request(req.method,db_url,req,res);
+    var db_url = url + '/query/' + req.params.index;
+    pipe_request(req.method, db_url, req, res);
   } else {
     next();
   }
 });
 
-app.all('/login',rewrite('/_login/cores/user_db'));
+app.all('/login', rewrite('/_login/cores/user_db'));
 
-for(var key in config.ldb) {
-  app.all('/api/dbs/'+key+'',
-    rewrite('/v1/'+config.ldb[key]+'/'+key+'/data'));
-  app.all('/api/dbs/'+key+'/:id',
-    rewrite('/v1/'+config.ldb[key]+'/'+key+'/data/:id'));
-  app.post('/api/query/'+key+'/:view',
-   rewrite('/v1/'+config.ldb[key]+'/'+key+'/query/:view'));
+for (var key in config.ldb) {
+  app.all('/api/dbs/' + key + '',
+    rewrite('/v1/' + config.ldb[key] + '/' + key + '/data'));
+  app.all('/api/dbs/' + key + '/:id',
+    rewrite('/v1/' + config.ldb[key] + '/' + key + '/data/:id'));
+  app.post('/api/query/' + key + '/:view',
+    rewrite('/v1/' + config.ldb[key] + '/' + key + '/query/:view'));
 }
 
-app.use('/_login/:db/:collection',login_route._login);
+app.use('/_login/:db/:collection', login_route._login);
 
-app.use('/v1/:db/:collection',ensureLogin_jwt, route1);
-app.use('/v2/:db/:collection',ensureLogin_jwt, route2);
+app.use('/v1/:db/:collection', ensureLogin, route1);
+app.use('/v2/:db/:collection', ensureLogin, route2);
 
 var count = config.mongodb.length;
 
 config.mongodb.forEach(function(db_config) {
   MongoClient.connect(db_config.url,
-    db_config.options,function(err,db) {
-    if(!err) {
-      count--;
-      mongodb[db_config.db] = {'db':db,'config':db_config};
-      if(count==0) {
-        https.createServer(ssl.options, app).listen(PORT, HOST, null, function () {
-          console.log('Server listening on port %d', this.address().port);
-        });
+    db_config.options,
+    function(err, db) {
+      if (!err) {
+        count--;
+        mongodb[db_config.db] = {
+          'db': db,
+          'config': db_config
+        };
+        if (count == 0) {
+          https.createServer(ssl.options, app).listen(PORT, HOST, null, function() {
+            console.log('Server listening on port %d', this.address().port);
+          });
+        }
       }
-    }
-  });
+    });
 });
