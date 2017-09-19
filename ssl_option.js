@@ -18,7 +18,7 @@ module.exports.options = {
   rejectUnauthorized: true
 };
 
-module.exports.mongodb_options:{
+module.exports.mongodb_options = {
   poolSize:100,
   ssl:true,
   sslKey: fs.readFileSync(path.join(certsPath, 'mongodb-key.pem')),
