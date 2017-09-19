@@ -2,6 +2,7 @@ var MongoClient = require('mongodb').MongoClient;
 var jwt = require('jsonwebtoken');
 var encryption = require('./encryption');
 var config = require('./config');
+var ssl = require('./ssl_option');
 
 var url = config.mongodb[0]['url'];
 var options = config.mongodb[0]['options'];
