@@ -1,7 +1,7 @@
 var jwt = require('jsonwebtoken');
 var encryption = require('./encryption');
-// var ssl = require('./ssl_option');
-var ssl = require('./config');
+var ssl = require('./ssl_option');
+//var ssl = require('./config');
 const loginTimeOut = 180;
 
 var findByUsername = function (username,req, cb) {
