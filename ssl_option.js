@@ -5,7 +5,7 @@ var certsPath = path.join(__dirname, 'ssl_certificate', 'server');
 var caCertsPath = path.join(__dirname, 'ssl_certificate', 'ca');
 var certsJWT = path.join(__dirname, 'ssl_certificate', 'jwt');
 
-var service_name = 'oosc';
+var service_name = 'maas';
 
 module.exports.options = {
   key: fs.readFileSync(path.join(certsPath, 'server.key')),

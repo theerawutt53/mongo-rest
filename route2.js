@@ -109,4 +109,27 @@ router.post('/query', function(req, res) {
   }
 });
 
+router.post('/mapreduce/:id', function(req, res) {
+  var collection = req.collection;
+  var body = req.body;
+  var _collection = req.mongodb.db.collection('_mr_design');
+  _collection.findOne({"_id":req.params.id},function(err,doc) {
+    var map = eval(doc.map);
+    var reduce = eval(doc.reduce);
+    var finalfn = eval(doc.finalfn);
+    collection.mapReduce(map, reduce, {out: doc.out,finalize:finalfn,query:body.query}, function(err, collection) {
+      if (err) {
+        res.json({
+          'ok': false,
+          'message': err
+        });
+      } else {
+        res.json({
+          'ok': true
+        });
+      }
+    });
+  });
+});
+
 module.exports = router;
