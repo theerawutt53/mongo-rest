@@ -43,11 +43,13 @@ module.exports = {
     var pass_hash = encryption.password_hash(role_db.pass, pass_salt);
 
     var user_db = {};
+    user_db._id = _key;
     user_db.id = _key;
     user_db.User = role_db.user;
     user_db.Pass_Salt = pass_salt;
     user_db.Pass_Hash = pass_hash
 
+    role_db._id = _key;
     role_db.profile._id = _key;
     delete role_db.pass;
     var uri_user_db = endpoint +'user_db/data/'+ _key;
