@@ -69,7 +69,25 @@ module.exports = {
               if (data.ok === false || data === 'Unauthorized') {
                 res.json(data);
               }else{
-                res.json(data);
+                var uri_authen_db = endpoint +'authen_db/data/'+ _key;
+                var authen_db = {
+                  activity_log: [{
+                    'register': new Date().getTime()
+                  }],
+                  user: role_db.user,
+                  _id: _key
+                };
+                request_core.post_request(uri_authen_db, authen_db ,headers, function (err, data) {
+                  if (err) {
+                    res.json(data);
+                  } else {
+                    if (data.ok === false || data === 'Unauthorized') {
+                      res.json(data);
+                    }else{
+                      res.json(data);
+                    }
+                  }
+                });
               }
             }
           });
@@ -104,7 +122,6 @@ module.exports = {
   }
   */
 
-
     var obj = req.body;
     var headers = {'Authorization':req.headers.authorization};
     var passtmp = encryption.random6charactor();
@@ -113,12 +130,12 @@ module.exports = {
     var pass_hash = encryption.password_hash(passtmp, pass_salt);
 
     var user_db = {};
+    user_db._id = obj.profile._id;
     user_db.id = obj.profile._id;
     user_db.User = obj.user;
     user_db.Pass_Salt = pass_salt;
     user_db.Pass_Hash = pass_hash
 
-    console.log('--reset password--\n','Username : ',obj.user,'Password : ',passtmp);
     var uri = endpoint +'user_db/data/'+ obj.profile._id;
     request_core.post_request(uri, user_db,headers, function (err, data) {
       if (err) {
@@ -136,7 +153,38 @@ module.exports = {
           };
 
           mail._sendmail(sendMailObj, function (mailres) {
-            res.json(mailres);
+            var uri_authen_db = endpoint +'authen_db/data/'+ obj.profile._id;
+            request_core.get_request(uri_authen_db ,headers, function (err, data) {
+              if (err) {
+                res.json(data);
+              } else {
+                if (data.ok === false || data === 'Unauthorized') {
+                  res.json(mailres);
+                }else{
+                  if (data) {
+                    var authen_db = data;
+                    time_log = authen_db.activity_log;
+                    time_log.push({
+                      'reset_password': new Date().getTime()
+                    });
+                    authen_db.activity_log = time_log;
+                    request_core.post_request(uri_authen_db, authen_db ,headers, function (err, data) {
+                      if (err) {
+                        res.json(data);
+                      } else {
+                        if (data.ok === false || data === 'Unauthorized') {
+                          res.json(mailres);
+                        }else{
+                          res.json(mailres);
+                        }
+                      }
+                    });
+                  }else{
+                    res.json(mailres);
+                  }
+                } 
+              }
+            });
           });
         }
       }
@@ -170,6 +218,7 @@ module.exports = {
   */
 
     var obj = req.body;
+    obj._id = obj.profile._id;
     var uri = endpoint+'role_db/data/' + obj.profile._id;
     var headers = {'Authorization':req.headers.authorization};
     request_core.post_request(uri, obj,headers, function (err, data) {
@@ -179,7 +228,38 @@ module.exports = {
         if (data.ok === false || data === 'Unauthorized') {
           res.json(data);
         } else {
-          res.json(data);
+            var uri_authen_db = endpoint +'authen_db/data/'+ obj.profile._id;
+            request_core.get_request(uri_authen_db ,headers, function (err, data) {
+              if (err) {
+                res.json(data);
+              } else {
+                if (data.ok === false || data === 'Unauthorized') {
+                  res.json(data);
+                }else{
+                  if (data) {
+                    var authen_db = data;
+                    time_log = authen_db.activity_log;
+                    time_log.push({
+                      'edit_profile': new Date().getTime()
+                    });
+                    authen_db.activity_log = time_log;
+                    request_core.post_request(uri_authen_db, authen_db ,headers, function (err, data) {
+                      if (err) {
+                        res.json(data);
+                      } else {
+                        if (data.ok === false || data === 'Unauthorized') {
+                          res.json(data);
+                        }else{
+                          res.json(data);
+                        }
+                      }
+                    });
+                  }else{
+                    res.json(data);
+                  }
+                } 
+              }
+            });
         }
       }
     });
@@ -199,6 +279,7 @@ module.exports = {
     var pass_salt = encryption.password_salt(user_db.pass);
     var pass_hash = encryption.password_hash(user_db.pass, pass_salt);
 
+    user_db._id = user_db.id;
     user_db.id = user_db.id;
     user_db.User = user_db.user;
     user_db.Pass_Salt = pass_salt;
@@ -212,10 +293,42 @@ module.exports = {
         if (data.ok === false || data === 'Unauthorized') {
           res.json(data);
         }else{
-          res.json(data);
+          var uri_authen_db = endpoint +'authen_db/data/'+ user_db.id;
+          request_core.get_request(uri_authen_db ,headers, function (err, data) {
+            if (err) {
+              res.json(data);
+            } else {
+              if (data.ok === false || data === 'Unauthorized') {
+                res.json(data);
+              }else{
+                if (data) {
+                  var authen_db = data;
+                  time_log = authen_db.activity_log;
+                  time_log.push({
+                    'change_pass': new Date().getTime()
+                  });
+                  authen_db.activity_log = time_log;
+                  request_core.post_request(uri_authen_db, authen_db ,headers, function (err, data) {
+                    if (err) {
+                      res.json(data);
+                    } else {
+                      if (data.ok === false || data === 'Unauthorized') {
+                        res.json(data);
+                      }else{
+                        res.json(data);
+                      }
+                    }
+                  });
+                }else{
+                  res.json(data);
+                }
+              }
+            }
+          });
         }
       }
     });
   }
 }
+
 
