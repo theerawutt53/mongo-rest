@@ -1,0 +1,33 @@
+{
+  "name": "obec_level",
+  "description": "screening poverty children",
+  "main": "server.js",
+  "authors": [
+    "DevJek (Akachai S.)"
+  ],
+  "license": "ISC",
+  "keywords": [
+    "cct",
+    "obec"
+  ],
+  "dependencies": {
+    "class-teacher-assignment": "git://github.com/matzeeya/class-teacher-assignment.git#master",
+    "web-animations-js": "^2.2.5",
+    "polymer": "^2.0.0",
+    "iron-flex-layout": "^2.0.0",
+    "webcomponentsjs": "^v1.0.2"
+  },
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "resolutions": {
+    "iron-flex-layout": "^2.0.0",
+    "webcomponentsjs": "^v1.0.2",
+    "polymer": "^2.0.0"
+  }
+}
