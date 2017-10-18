@@ -20,7 +20,8 @@ var login_route = require('./login');
 var ssl = require('./ssl_option');
 var config = require('./config');
 
-var PORT = process.env.PORT || config.port;
+var port_http = config.port_http;
+var port_https = config.port_https;
 var HOST = process.env.HOST || '';
 
 var mongodb = {};
@@ -125,9 +126,20 @@ var pipe_request = function(method, url, req, res) {
   }
 }
 
+function requireHTTPS(req, res, next) {
+  if (!req.secure) {
+    //FYI this should work for local development as well
+    return res.redirect('https://' + req.get('host') + req.url);
+  }
+  next();
+}
+
+app.use(requireHTTPS);
+app.use(express.static(path.join(__dirname, 'views')));
+
 require('express-readme')(app, {
   filename: 'README.md',
-  routes: ['/', '/readme']
+  routes: ['/manual', '/readme']
 });
 
 app.param('db', function(req, res, next, value) {
@@ -192,7 +204,10 @@ config.mongodb.forEach(function(db_config) {
           'config': db_config
         };
         if (count == 0) {
-          https.createServer(ssl.options, app).listen(PORT, HOST, null, function() {
+          app.listen(port_http, function() {
+            console.log('Server listening on port %d', this.address().port);
+          });
+          https.createServer(ssl.options, app).listen(port_https, null, function() {
             console.log('Server listening on port %d', this.address().port);
           });
         }
