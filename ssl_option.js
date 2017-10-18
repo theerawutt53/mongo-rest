@@ -20,7 +20,7 @@ module.exports.options = {
 };
 
 module.exports.mongodb_options = {
-  poolSize:100,
+  poolSize:1000,
   ssl:true,
   sslKey: fs.readFileSync(path.join(certsPath, 'mongodb-key.pem')),
   sslCert: fs.readFileSync(path.join(certsPath, 'mongodb-cert.pem')),
@@ -30,6 +30,6 @@ module.exports.mongodb_options = {
 module.exports.jwt = {
   key: fs.readFileSync(path.join(certsJWT, 'jwt_key.key')),
   cert: fs.readFileSync(path.join(certsJWT, 'jwt_cert.crt')),
-  eexpiresIn:'1h'
+  expiresIn:'1h'
 };
 
