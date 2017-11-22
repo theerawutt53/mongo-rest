@@ -61,29 +61,40 @@ router.post('/data/:id?', function(req, res) {
   var value = req.body;
   var collection = req.collection;
 
-  if (key._id) {
-    value['_id'] = key._id;
-  } else {
-    key['_id'] = uuid.v1().replace(/-/g, '');
-    value['_id'] = key['_id'];
-  }
-  collection.replaceOne(key, value, {
-    'upsert': true
-  }, function(err, resc) {
-    if (err) {
-      res.json({
-        'ok': false,
-        'message': err
-      });
+  /*var hosttest = req.body.hostid ? req.body.hostid.includes('SU') : false;
+  if((collection.s.name == 'student_data_db' ||
+      collection.s.name == 'cct_record_db' ||
+      collection.s.name == 'studenthouse_location_db' ||
+      collection.s.name == 'hostclassroom_data') &&
+      config.cctscreen === false && !hosttest){
+    res.json({
+      'ok':false,
+      message:'ระบบได้ทำการปิดการคัดกรอง'
+    });
+  }else{*/
+    if (key._id) {
+      value['_id'] = key._id;
     } else {
-      var result = resc.result;
-      res.json({
-        'ok': result.ok == 1 ? true : false,
-        'key': key['_id']
-      });
+      key['_id'] = uuid.v1().replace(/-/g, '');
+      value['_id'] = key['_id'];
     }
-  });
-
+    collection.replaceOne(key, value, {
+      'upsert': true
+    }, function(err, resc) {
+      if (err) {
+        res.json({
+          'ok': false,
+          'message': err
+        });
+      } else {
+        var result = resc.result;
+        res.json({
+          'ok': result.ok == 1 ? true : false,
+          'key': key['_id']
+        });
+      }
+    });
+//  }
 });
 
 router.delete('/data/:id', function(req, res) {

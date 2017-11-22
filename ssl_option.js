@@ -30,6 +30,6 @@ module.exports.mongodb_options = {
 module.exports.jwt = {
   key: fs.readFileSync(path.join(certsJWT, 'jwt_key.key')),
   cert: fs.readFileSync(path.join(certsJWT, 'jwt_cert.crt')),
-  expiresIn:'1h'
+  expiresIn:'2h'
 };
 

@@ -10,12 +10,10 @@ var options = config.mongodb[0]['options'];
 var findByUsername = function(username, req, cb) {
   req.collection.find({
       'User': username
-    })
-    .toArray(function(err, docs) {
-      if (docs.length > 0) {
+    }).toArray(function(err, docs) {
+      if (docs != null && docs.length > 0) {
         cb(true, docs[0]);
-      }
-      else {
+      } else {
         cb(false, null);
       }
     });
@@ -56,8 +54,7 @@ module.exports = {
     findByUsername(_username, req, function(found, user) {
       if (found) {
         var _password_hash = encryption.password_hash(_pass, user.Pass_Salt);
-        if (user.User === _username && user.Pass_Hash ===
-          _password_hash) {
+        if (user.User === _username && user.Pass_Hash === _password_hash) {
           if (!user.deactive) {
             var key = user._id;
             var time_log = [];
@@ -96,9 +93,7 @@ module.exports = {
                         });
                       }
                     });
-                }
-                else {
-
+                } else {
                   var obj = {
                     activity_log: [{
                       'login': new Date().getTime()
@@ -116,8 +111,7 @@ module.exports = {
                       res.json({
                         status: false
                       });
-                    }
-                    else {
+                    } else {
                       res.set({
                         'Access-Control-Expose-Headers': 'Authorization',
                         'Content-Type': 'application/json; charset=utf-8',
@@ -131,23 +125,19 @@ module.exports = {
                   });
                 }
               });
-
-          }
-          else {
+          } else {
             res.json({
               status: false,
               message: 'Username Deactived'
             });
           }
-        }
-        else {
+        } else {
           res.json({
             status: false,
             message: 'Invalid Username or Password'
           });
         }
-      }
-      else {
+      } else {
         res.json({
           status: false,
           message: 'Username is Not Found'
