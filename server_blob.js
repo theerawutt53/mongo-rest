@@ -105,6 +105,12 @@ app.post('/download',ensureLogin_jwt, function(req,res) {
     var container = req.body.container;
     var filename = req.body.filename;
     blobService.createReadStream(container, filename)
+    .on('error',function(e) {
+      res.json({
+        'ok': false,
+        'message':e.message
+      });
+    })
     .pipe(base64.encode())
     .pipe(res);
   }else{

@@ -5,7 +5,7 @@ var certsPath = path.join(__dirname, 'ssl_certificate', 'server');
 var caCertsPath = path.join(__dirname, 'ssl_certificate', 'ca');
 var certsJWT = path.join(__dirname, 'ssl_certificate', 'jwt');
 var  ReadPreference = require('mongodb').ReadPreference;
-var service_name = 'thaieduforall_20180203';
+var service_name = 'maas';
 
 module.exports.options = {
   key: fs.readFileSync(path.join(certsPath, 'server.key')),
@@ -17,15 +17,6 @@ module.exports.options = {
   ],
   requestCert: false,
   rejectUnauthorized: true
-};
-
-module.exports.mongodb_old_options = {
-  poolSize:1000,
-  ssl:true,
-  sslKey: fs.readFileSync(path.join(certsPath, 'mongodb-old-key.pem')),
-  sslCert: fs.readFileSync(path.join(certsPath, 'mongodb-old-cert.pem')),
-  sslCA: fs.readFileSync(path.join(caCertsPath, 'mongodb-old-ca-chain.pem')),
-  readPreference:ReadPreference.PRIMARY_PREFERRED
 };
 
 module.exports.mongodb_options = {
@@ -42,3 +33,5 @@ module.exports.jwt = {
   cert: fs.readFileSync(path.join(certsJWT, 'jwt_cert.crt')),
   expiresIn:'2h'
 };
+
+

@@ -1,7 +1,7 @@
 var bodyParser = require('body-parser');
 var config = require('./config');
 var request_core = require('./request_core');
-var db_endpoint = 'https://maas.nuqlis.com:8000/v2/obec/';
+var db_endpoint = 'https://thaieduforall.org:8000/v2/obec/';
 
 module.exports = {
   _studentstatus : function(req, res){

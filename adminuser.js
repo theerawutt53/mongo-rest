@@ -7,7 +7,7 @@ var mailtemplate = require('./mailtemplate');
 var request_core = require('./request_core');
 var encryption = require('./encryption');
 
-var endpoint = 'https://maas.nuqlis.com:8000/v2/cores/';
+var endpoint = 'https://thaieduforall.org:8000/v2/cores/';
 
 module.exports = {
   _user: function (req, res) {

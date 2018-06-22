@@ -44,7 +44,7 @@ passport.use(new BearerStrategy(
   function(token, done) {
     var pConf = {
       protocol: "https",
-      host: "maas.nuqlis.com:9002",
+      host: "thaieduforall.org:9002",
     };
     var request = require('request'),
       options = {

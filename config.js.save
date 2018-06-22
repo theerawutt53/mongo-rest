@@ -1,0 +1,347 @@
+var ssl = require('./ssl_option');
+
+//var replicateSet = "mongodb://mongodb-query1.inforvation.systems:27017,mongodb-query2.inforvation.systems:27017,moe03.inforvation.systems:27017,moe06.inforvation.systems:27017";
+var replicateSet = "mongodb://mongodb-query1.inforvation.systems:27017,mongodb-query2.inforvation.systems:27017";
+
+module.exports.forward = {
+  'studentattend': 'http://localhost:44309',
+  'obec_grade': 'http://localhost:44305',
+  'earlywarning': 'http://localhost:44303',
+  'edu_students': 'http://localhost:44308',
+  'obec_teacher': 'http://localhost:44306',
+
+  'admin_area': 'http://moe02.inforvation.systems:44306',
+  'admin_school': 'http://moe02.inforvation.systems:44307',
+  'announcement': 'http://moe02.inforvation.systems:44308',
+  'school_db': 'http://moe02.inforvation.systems:44309',
+  'KpiData59_1MPerArea': 'http://moe02.inforvation.systems:44310',
+  'KpiData59_1MPerProvince': 'http://moe02.inforvation.systems:44311',
+  'KpiData59_1PPerArea': 'http://moe02.inforvation.systems:44312',
+  'KpiData59_1PPerProvince': 'http://moe02.inforvation.systems:44313',
+  'pp5summarynotification': 'http://moe02.inforvation.systems:44314',
+  'teacher67p': 'http://moe02.inforvation.systems:44319',
+  'user_demo': 'http://moe02.inforvation.systems:44320',
+  'dmc59_1': 'http://moe02.inforvation.systems:44323',
+  'pp5summary': 'http://moe02.inforvation.systems:44324'
+};
+
+module.exports.ldb = {
+  "teacher_db":"obec",
+  "hostclassroom":"obec",
+  "weightheight":"obec",
+  "hostattendsummary":"obec",
+  "students_care":"obec",
+  "healthcare":"obec",
+  "classteacher":"obec",
+  "dmc_yakjon601":"obec",
+  "form_template":"obec",
+  "_attendance_count":"obec",
+  "_attendance_all":"obec",
+  "school":"obec",
+  "form_record_new":"obec",
+  "morning_attendance":"obec",
+  "hostclassroom_data":"obec",
+  "student_data":"obec",
+  "studenthouse_location":"obec",
+  "homevisit_record":"obec",
+  "form_record_homevisit":"obec",
+  "obec_students":"obec",
+  "hostsummary":"obec",
+//  "morning":"obec",
+//  "morningdetail":"obec",
+  "KPI_DATA":"obec",
+  "teacher_db":"obec",
+  "student_data_db":"obec",
+  "studenthouse_location_db":"obec",
+  "cct_record_db":"obec",
+  "publicholiday":"obec",
+  "CCT_CHECKDATA_60_1_CONFIRMED":"obec",
+  "CCT_CHECKDATA_60_1_NO_CONFIRMED":"obec",
+  "CCT_CHECKDATA_60_1_NoScreen":"obec",
+  "CCT_CHECKDATA_60_1_RESULT":"obec",
+  "CCT_CHECKDATA_60_1_RESULT_PER_AREA":"obec",
+  "CCT_CHECKDATA_60_1_RESULTP4M3_PER_AREA":"obec",
+
+  "role_db":"cores",
+  "user_db":"cores",
+
+  "hostsystem":"qinfo",
+  "pp5summary":"qinfo",
+  "gpadata":"qinfo",
+  "attendance":"qinfo",
+  "newindicator":"qinfo",
+  "desirecharacteristicdata":"qinfo",
+  "activity":"qinfo",
+  "knowledgestructure":"qinfo",
+  "readthinkwritedata":"qinfo",
+  "examratio":"qinfo",
+  "hostconfig":"qinfo",
+  "subject_attendance":"qinfo",
+  "pp5summary":"qinfo",
+
+  "oosc_assignhost":"oosc",
+  "oosc_form":"oosc",
+  "oosc_plan":"oosc",
+  "oosc_plan_v2":"oosc",
+  "oosc_child":"oosc",
+  "oosc_assignment":"oosc",
+  "oosc_province":"oosc",
+  "oosc_city":"oosc",
+  "oosc_tumbon":"oosc",
+  "oosc_village":"oosc",
+  "_oosc_report":"oosc"
+};
+
+module.exports.mongodb = [{
+    db:'cores',
+    url:replicateSet+"/cores",
+    options: ssl.mongodb_options,
+    map_index : {
+      "role_db":[
+        {"app_user":["application","user"]},
+        {"app_role_area_host":["application","roles","profile.areaid","profile.hostid"]},
+        {"app_province_city_tumbon":["application","profile.province","profile.city","profile.tumbon"]}
+      ],
+      "user_db":[
+        {"user":["user"]}
+      ]
+    }
+  }, {
+    db:'social',
+    url:replicateSet+"/social",
+    options: ssl.mongodb_options,
+    map_index : {
+    }
+  },{
+    db:'obec',
+    url:replicateSet+"/obec",
+    options: ssl.mongodb_options,
+    map_index : {
+      "obec_students": [
+        {"host_class_room": ["hostid","class","room"]},
+        {"cid": ["cid"]}
+      ],
+      "form_record_new":[
+        {"cid": ["cid"]},
+        {"hostid_cid":["hostid","cid"]}
+      ],
+      "form_record_homevisit":[
+        {"hostid_cid":["hostid","cid"]}
+      ],
+      /*"morning":[
+        {"host_year_semester_class_room":["hostid","year","semester","educationclassid","room"]}
+      ],
+      "morningdetail":[
+        {"id":["id"]}
+      ],*/
+      "weightheight":[
+        {"host_year_class_room":["hostid","year","educationclass","room"]},
+        {"host_year_semester_educationclass_room_cid":["hostid","year","semester","educationclass","room","cid"]},
+        {"cid":["cid"]}
+      ],
+      "hostsummary":[
+        {"area_host":["areaid","hostid"]},
+        {"hostid":["hostid"]}
+      ],
+      "school":[
+        {"areaid":["areaid"]},
+        {"province":["province"]},
+        {"hostid":["hostid"]}
+      ],
+      "hostattendsummary":[
+        {"area_host":["areaid","hostid"]},
+        {"hostid":["hostid"]}
+      ],
+      "teacher_db":[
+        {"area_host":["areaid","hostid"]},
+        {"hostid":["hostid",["firstname","lastname","deactive","deactive_reason"]]}
+      ],
+      "CCT_CHECKDATA_60_1_CONFIRMED":[
+        {"hostid":["hostid"]}
+      ],
+      "CCT_CHECKDATA_60_1_NO_CONFIRMED":[
+        {"hostid":["hostid"]}
+      ],
+      "CCT_CHECKDATA_60_1_NoScreen":[
+        {"hostid":["hostid"]}
+      ],
+      "CCT_CHECKDATA_60_1_RESULT":[
+        {"hostid":["hostid"]}
+      ],
+      "hostclassroom":[
+        {"app_host_class_room":["app","hostid","class","room"]}
+      ],
+      "classteacher":[
+        {"teacher":["teacher_id"]},
+        {"class":["classname"]},
+        {"year_semester_host_class_room":["year","semester","host","classname","room"]}
+      ],
+      "form_template":[
+      ],
+      "healthcare":[
+        {"student_info_cid":["student_info.cid"]},
+        {"hostid_timestamp_cid_name":["staff_info.HostID","ts","student_info.cid","student_info.name"]}
+      ],
+      "students_care":[
+        {"cid_year_type":["doc_type","student.cid","dmc.year","form_type",["status","ts"]]},
+        {"assignment":["dmc.host","dmc.level","dmc.room","status","form_type","student.cid","student.name","ts"]},
+        {"assignments_by_room":["dmc.host","dmc.level","dmc.room","status","ts",["status","form_type","student.cid","student.name","ts"]]},
+        {"class_info":["host","year","level","room"]},
+        {"host_info":["doc_type","dmc.host"]}
+      ],
+      "CCT_CHECKDATA_60_1_RESULT_PER_AREA":[
+        {"areaid":["areaid"]}
+      ],
+      "CCT_CHECKDATA_60_1_RESULTP4M3_PER_AREA":[
+        {"areaid":["areaid"]}
+      ],
+      "morning_attendance":[
+        {"host_year_semester_class_room_recdate":["hostid","year","semester","educationclass","room","recdate"]}
+      ],
+      "hostclassroom_data":[
+        {"host_class_room":["host","class","room"]},
+        {"host":["host"]}
+      ],
+      "student_data_db":[
+        {"cid":["cid"]},
+        {"host_class_room":["hostid","class","room"]},
+        {"host_class_room_year":["hostid","class","room","year"]},
+        {"hostid":["hostid"]},
+        {"class":["class"]}
+      ],
+      "KPI_DATA":[
+        {"hostid":["hostid"]}
+      ],
+      "studenthouse_location_db":[
+        {"cid":["cid"]}
+      ],
+      "cct_record_db":[
+        {"cid":["cid"]}
+      ],
+      "homevisit_record":[
+        {"cid":["cid"]}
+      ],
+      "obec_grade":[
+        {"host_class_room":["SCH_ID10","CLASS","ROOM"]},
+        {"cid":["PP_ID"]}
+      ],
+      "publicholiday":[
+        {"year":["year"]}
+      ]
+    }
+  },{
+    db:'oosc',
+    url:replicateSet+"/oosc",
+    options: ssl.mongodb_options,
+    map_index : {
+      "oosc_form":[
+        {"houseid":["houseid"]},
+        {"city":["city"]}
+      ],
+      "oosc_plan":[
+        {"cid":["cid"]}
+      ],
+      "oosc_plan_v2": [{
+        "cid": ["cid"]}
+      ],
+      "oosc_assignhost":[
+        {"hostid":["hostid"]}
+      ],
+      "oosc_assignment":[
+        {"assignfor":["assignfor"]},
+        {"village":["village"]}
+      ],
+      "oosc_child":[
+        {"cid":["cid"]},
+        {"villagecode":["villagecode"]},
+        {"houseid":["houseid"]},
+        {"tumboncode":["tumboncode"]},
+        {"firstname":["firstname"]},
+        {"tumbon_status":["tumboncode","status"]},
+        {"city__issurvey":["cityname","issurvey"]},
+        {"tumbon_issurvey": ["tumboncode","issurvey"]}
+      ],
+      "oosc_province":[
+        {"id":["id"]},
+        {"name":["name"]}
+      ],
+      "oosc_city":[
+        {"id":["id"]},
+        {"name":["name"]}
+      ],
+      "oosc_tumbon":[
+        {"id":["id"]},
+        {"name":["name"]}
+      ],
+      "oosc_village":[
+        {"id":["id"]},
+        {"name":["name"]}
+      ]
+    }
+  },{
+    db:'qinfo',
+    url:replicateSet+"/qinfo",
+    options: ssl.mongodb_options,
+    map_index : {
+      "knowledgestructure":[
+        {"schooltimeid":["schooltimeid"]}
+      ],
+      "attendance":[
+        {"host_year_semester_class_room_subj":["hostid","year","semester","class","room","subject"]}
+      ],
+      "desirecharacteristicdata":[
+        {"schooltimeid":["SchoolTimeID"]},
+        {"cid":["CID"]}
+      ],
+      "readthinkwritedata":[
+        {"schooltimeid":["SchoolTimeID"]},
+        {"cid":["CID"]}
+      ],
+      "hostsystem":[
+        {"hostid":["hostid"]}
+      ],
+      "hostconfig":[
+        {"host_year_semester":["HostID","AcademicYear","Semester"]}
+      ],
+      "newindicator":[
+        {"schooltimeid":["schooltimeid"]}
+      ],
+      "examratio":[
+        {"schooltimeid":["schooltimeid"]}
+      ],
+      "activity":[
+        {"id":["id"]}
+      ],
+      "_attendance_count":[
+        {"id":["_id"]}
+      ],
+      "_attendance_all":[
+        {"id":["_id"]}
+      ],
+      "subject_attendance":[
+        {"host_year_semester_class_room_subject_recdate":['hostid','year','semester','educationclass','room','subject','recdate']}
+      ],
+      "gpadata":[
+        {"hostid_year":['hostid','year']}
+      ],
+      "pp5summary":[
+        {"week_hostid":['week','hostid']},
+        {"":['week','hostid']}
+      ]
+    }
+  }
+]
+
+module.exports.service_name = 'thaieduforall_20180203';
+module.exports.port = "8000";
+module.exports.servertime_port = "8001";
+module.exports.blob_port = "8002";
+module.exports.usermanage_port = "8003";
+module.exports.cctservice_port = "8004";
+
+module.exports.azure_blob_accessKey = "BrHP+BhvmKROuKhM/fjojgn6zggBZrFGEZ3+Ma1MfzFW8wp3FpLVxjXrehQFaZrIAzdGlXZJzyNaXT7aj6FKAQ==";
+module.exports.azure_blob_accountName = "nuqlis";
+module.exports.sendgrid_apikey = "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";
+
+module.exports.webdomain = "http://cct.thaieduforall.org/";
+module.exports.cctscreen = false;
