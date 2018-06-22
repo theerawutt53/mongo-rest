@@ -5,9 +5,6 @@ var certsPath = path.join(__dirname, 'ssl_certificate', 'server');
 var caCertsPath = path.join(__dirname, 'ssl_certificate', 'ca');
 var certsJWT = path.join(__dirname, 'ssl_certificate', 'jwt');
 
-//var replicateSet = "mongodb://mongodb-query1.inforvation.systems:27017,mongodb-query2.inforvation.systems:27017,moe03.inforvation.systems:27017,moe06.inforvation.systems:27017";
-var replicateSet = "mongodb://mongodb-query1.inforvation.systems:27017,mongodb-query2.inforvation.systems:27017";
-
 module.exports.ldb ={
   "teacher_db":"obec"
 };
@@ -15,7 +12,7 @@ module.exports.ldb ={
 module.exports.mongodb = [
   {
     db:'obec',
-    url:replicateSet+"/obec",
+    url:"mongodb://mongodb-query1-conf1.inforvation.systems:27017,moe06.inforvation.systems:27017,moe03.inforvation.systems:27017/obec",
     options:{
       poolSize:100,
       ssl:true,
@@ -44,11 +41,6 @@ module.exports.mongodb = [
       "weightheight":[
         {"host_year_class_room":["hostid","year","educationclass","room"]},
         {"host_year_semester_educationclass_room_cid":["hostid","year","semester","educationclass","room","cid"]},
-        {"cid":["cid"]}
-      ],
-      "weightheight2018":[
-        {"host_year_class_room":["hostid","year","educationclass","room"]},
-        {"host_year_semester_class_room_cid":["hostid","year","semester","educationclass","room","cid"]},
         {"cid":["cid"]}
       ],
       "hostsummary":[
@@ -143,7 +135,7 @@ module.exports.mongodb = [
     }
   },{
     db:'oosc',
-    url:replicateSet+"/oosc",
+    url:"mongodb://mongodb-query1-conf1.inforvation.systems:27017,moe06.inforvation.systems:27017,moe03.inforvation.systems:27017/oosc",
     options:{
       poolSize:100,
       ssl:true,
@@ -195,7 +187,7 @@ module.exports.mongodb = [
     }
   },{
     db:'qinfo',
-    url:replicateSet+"/qinfo",
+    url:"mongodb://mongodb-query1-conf1.inforvation.systems:27017,moe06.inforvation.systems:27017,moe03.inforvation.systems:27017/qinfo",
     options:{
       poolSize:100,
       ssl:true,
@@ -240,23 +232,15 @@ module.exports.mongodb = [
         {"id":["_id"]}
       ],
       "subject_attendance":[
-        {"host_year_semester_class_room_subject_recdate":['hostid','year','semester','educationclass','room','subject','recdate']},
-        {"schooltimeid":["schooltimeid"]}
+        {"host_year_semester_class_room_subject_recdate":['hostid','year','semester','educationclass','room','subject','recdate']}
       ],
       "gpadata":[
         {"hostid_year":['hostid','year']}
-      ],
-      "pp5summary":[
-        {"week_hostid":['week','hostid']},
-        {"hostid":['hostid']}
-      ],
-      "school_report_summary":[
-        {"hostid":['hostid']}
       ]
     }
   },{
     db:'cores',
-    url:replicateSet+"/cores",
+    url:"mongodb://mongodb-query1-conf1.inforvation.systems:27017,moe06.inforvation.systems:27017,moe03.inforvation.systems:27017/cores",
     options:{
       poolSize:100,
       ssl:true,
