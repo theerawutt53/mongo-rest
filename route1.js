@@ -6,50 +6,58 @@ var ObjectId = require('mongodb').ObjectId;
 var uuid = require('node-uuid');
 var router = express.Router();
 var config = require('./config');
+var collection_except = require('./collection_except');
 
 router.get('/data/:id?', function(req, res) {
   var key = req.params.id ? req.params.id : '';
   var collection = req.collection;
-  var opt = {limit: 10};
-  if (req.query.limit) {
-    var limit = parseInt(req.query.limit);
-    if(limit != -1) {
-      opt['limit'] = limit ? limit : 10;
-    }
-  }
-
-  var fn = function() {
-    return through2.obj(function(chunk, enc, callback) {
-      callback(null, {
-        'key': chunk._id,
-        'value': chunk
-      });
+  if(collection_except.list_collection_except.indexOf(collection.s.name) != -1){
+    res.status(406).json({
+      'ok':false,
+      message:'Collection List in Except'
     });
-  };
+  }else{
+    var opt = {limit: 10};
+    if (req.query.limit) {
+      var limit = parseInt(req.query.limit);
+      if(limit != -1) {
+        opt['limit'] = limit ? limit : 10;
+      }
+    }
 
-  if(key == '') {
-    collection.find({}, opt)
-    .pipe(fn())
-    .pipe(JSONStream.stringify())
-    .pipe(res);
-  } else {
-    collection.findOne({"_id":key}, opt,function(err,doc) {
-      if(!err) {
-        if(!doc) {
+    var fn = function() {
+      return through2.obj(function(chunk, enc, callback) {
+        callback(null, {
+          'key': chunk._id,
+          'value': chunk
+        });
+      });
+    };
+
+    if(key == '') {
+      collection.find({}, opt)
+      .pipe(fn())
+      .pipe(JSONStream.stringify())
+      .pipe(res);
+    } else {
+      collection.findOne({"_id":key}, opt,function(err,doc) {
+        if(!err) {
+          if(!doc) {
+            res.json({
+              'ok': false,
+              'message': 'Not Found'
+            });
+          } else {
+            res.json(doc);
+          }
+        } else {
           res.json({
             'ok': false,
-            'message': 'Not Found'
+            'message': err
           });
-        } else {
-          res.json(doc);
         }
-      } else {
-        res.json({
-          'ok': false,
-          'message': err
-        });
-      }
-    });
+      });
+    }
   }
 });
 
@@ -61,27 +69,12 @@ router.post('/data/:id?', function(req, res) {
   var value = req.body;
   var collection = req.collection;
 
-  var hosttest = req.body.hostid ? req.body.hostid.includes('SU') : false;
-  var phase = '';
-  if(value["$set"]){
-    if(value["$set"]["phase"]){
-      phase = value["$set"]["phase"];
-    }else{
-      phase = '';
-    }
-  }
-  if((collection.s.name == 'student_data_db' ||
-      collection.s.name == 'cct_record_db' ||
-      collection.s.name == 'studenthouse_location_db' ||
-      collection.s.name == 'hostclassroom_data') &&
-      config.cctscreen === false && !hosttest && phase == ''){
-//    console.log('--route1 service close--');
-    res.json({
+  if(collection_except.list_collection_except.indexOf(collection.s.name) != -1){
+    res.status(406).json({
       'ok':false,
-      message:'ระบบได้ทำการปิดการคัดกรอง'
+      message:'Collection List in Except'
     });
   }else{
-//    console.log('--route1 service open--',collection.s.name);
     if (key._id) {
       value['_id'] = key._id;
     } else {
@@ -110,20 +103,27 @@ router.post('/data/:id?', function(req, res) {
 router.delete('/data/:id', function(req, res) {
   var key = req.params.id;
   var collection = req.collection;
-  collection.deleteOne({'_id':key}, function(err, resc) {
-    if (err) {
-      res.json({
-        'ok': false,
-        'message': err
-      });
-    } else {
-      var result = resc.result;
-      res.json({
-        'ok': result.ok == 1 ? true : false,
-        'key': key
-      });
-    }
-  });
+  if(collection_except.list_collection_except.indexOf(collection.s.name) != -1){
+    res.status(406).json({
+      'ok':false,
+      message:'Collection List in Except'
+    });
+  }else{
+    collection.deleteOne({'_id':key}, function(err, resc) {
+      if (err) {
+        res.json({
+          'ok': false,
+          'message': err
+        });
+      } else {
+        var result = resc.result;
+        res.json({
+          'ok': result.ok == 1 ? true : false,
+          'key': key
+        });
+      }
+    });
+  }
 });
 
 router.post('/query/:index', function(req, res) {
@@ -159,78 +159,84 @@ router.post('/query/:index', function(req, res) {
   }
 
   var collection = req.collection;
-
-  var start_query = {};
-  if (req.body.start) {
-    var tmp_list = [];
-    for (var i = 0; i < req.body.start.length; i++) {
-      var tmp = {};
-      tmp[array_attrs[i]] = {
-        '$gte': req.body.start[i]
-      };
-      tmp_list.push(tmp);
-    }
-    start_query["$and"] = tmp_list;
-  }
-
-  var end_query = {};
-  if (req.body.end) {
-    var tmp_list = [];
-    for (var i = 0; i < req.body.end.length; i++) {
-      var tmp = {};
-      tmp[array_attrs[i]] = {
-        '$lte': req.body.end[i]
-      };
-      tmp_list.push(tmp);
-    }
-    end_query["$and"] = tmp_list;
-  }
-
-  var query = {};
-  if (req.body.match) {
-    var tmp_list = [];
-    for (var i = 0; i < req.body.match.length; i++) {
-      var tmp = {};
-      tmp[array_attrs[i]] = {
-        '$eq': req.body.match[i]
-      };
-      tmp_list.push(tmp);
-    }
-    query["$and"] = tmp_list;
+  if(collection_except.list_collection_except.indexOf(collection.s.name) != -1){
+    res.status(406).json({
+      'ok':false,
+      message:'Collection List in Except'
+    });
   }else{
-    query["$and"] = [start_query,end_query];
-  }
-  //console.log(JSON.stringify(query));
-  collection.find(query, opt).sort(orderby)
-  .pipe(through2.obj(function(chunk,enc,callback) {
-    var obj = {};
-    obj['key'] = [];
-    obj['key'].push(index);
-    array_attrs.forEach(function(attr) {
-      if(attr.constructor !== Array) {
-        obj['key'].push(chunk[attr]);
+    var start_query = {};
+    if (req.body.start) {
+      var tmp_list = [];
+      for (var i = 0; i < req.body.start.length; i++) {
+        var tmp = {};
+        tmp[array_attrs[i]] = {
+          '$gte': req.body.start[i]
+        };
+        tmp_list.push(tmp);
       }
-    });
-    var atts = [];
-    attr_att.forEach(function(attr) {
-      atts.push(chunk[attr]);
-    });
-    if(atts.length > 0) {
-      obj['key'].push(atts);
+      start_query["$and"] = tmp_list;
     }
-    obj['key'].push(chunk._id);
-    if(req.body.include_doc) {
-      obj['value'] = {
-        'key':chunk._id,
-        'doc':chunk
-      };
-    } else {
-      obj['value']=chunk._id;
+
+    var end_query = {};
+    if (req.body.end) {
+      var tmp_list = [];
+      for (var i = 0; i < req.body.end.length; i++) {
+        var tmp = {};
+        tmp[array_attrs[i]] = {
+          '$lte': req.body.end[i]
+        };
+        tmp_list.push(tmp);
+      }
+      end_query["$and"] = tmp_list;
     }
-    callback(null,obj);
-  }))
-  .pipe(JSONStream.stringify())
-  .pipe(res);
+
+    var query = {};
+    if (req.body.match) {
+      var tmp_list = [];
+      for (var i = 0; i < req.body.match.length; i++) {
+        var tmp = {};
+        tmp[array_attrs[i]] = {
+          '$eq': req.body.match[i]
+        };
+        tmp_list.push(tmp);
+      }
+      query["$and"] = tmp_list;
+    }else{
+      query["$and"] = [start_query,end_query];
+    }
+    collection.find(query, opt).sort(orderby)
+    .pipe(through2.obj(function(chunk,enc,callback) {
+      var obj = {};
+      obj['key'] = [];
+      obj['key'].push(index);
+      array_attrs.forEach(function(attr) {
+        if(attr.constructor !== Array) {
+          obj['key'].push(chunk[attr]);
+        }
+      });
+      var atts = [];
+      attr_att.forEach(function(attr) {
+        atts.push(chunk[attr]);
+      });
+      if(atts.length > 0) {
+        obj['key'].push(atts);
+      }
+      obj['key'].push(chunk._id);
+      if(req.body.include_doc) {
+        obj['value'] = {
+          'key':chunk._id,
+          'doc':chunk
+        };
+      } else {
+        obj['value']=chunk._id;
+      }
+      callback(null,obj);
+    }))
+    .pipe(JSONStream.stringify())
+    .pipe(res);
+  }
 });
 
 module.exports = router;
+

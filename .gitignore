@@ -2,3 +2,4 @@ node_modules
 ssl_certificate
 config.js
 server_db_9000.js
+log/*

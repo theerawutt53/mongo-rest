@@ -1,6 +1,12 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');
+//--------------------
+var morgan = require('morgan');
+var fs = require('fs');
+var path = require('path');
+var rfs = require('rotating-file-stream');
+//--------------------
 var passport = require('passport');
 var LocalStrategy = require('passport-localapikey').Strategy;
 var BearerStrategy = require('passport-http-bearer').Strategy;
@@ -8,7 +14,6 @@ var JwtStrategy = require('passport-jwt').Strategy;
 var ExtractJwt = require('passport-jwt').ExtractJwt;
 var session = require('express-session');
 var authorization = require('express-authorization');
-var path = require('path');
 var https = require('https');
 var request = require('request');
 var rewrite = require('express-urlrewrite');
@@ -35,6 +40,20 @@ app.use(bodyParser.json({
 app.use(bodyParser.urlencoded({
   extended: true
 }));
+
+var logDirectory = path.join(__dirname, 'log');
+
+// ensure log directory exists
+fs.existsSync(logDirectory) || fs.mkdirSync(logDirectory);
+
+// create a rotating write stream
+var accessLogStream = rfs('access.log', {
+  interval: '1d', // rotate daily
+  path: logDirectory
+});
+
+// setup the logger
+app.use(morgan('combined', {stream: accessLogStream}));
 
 passport.use(new LocalStrategy(function(apikey, done) {
   login_route._isAuthen(apikey, done)
