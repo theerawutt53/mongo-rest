@@ -1,2 +1,4 @@
 node_modules
 ssl_certificate
+log/
+package-lock.json
